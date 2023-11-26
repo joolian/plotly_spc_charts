@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from pathlib import Path
+from spc_charts import Constants
 
 
 class XmRChart:
@@ -37,8 +39,11 @@ class XmRChart:
             y=control_limit_y,
             name=name,
             mode='lines',
-            line_color='black',
-            line_dash='dash'
+            line=dict(
+                color='black',
+                dash='dash',
+                width=1
+            )
         )
 
     def _mean_trace(self, value):
@@ -48,7 +53,7 @@ class XmRChart:
             x=control_limit_x,
             y=control_limit_y,
             mode='lines',
-            line_color='black',
+            line=dict(color='black', width=1),
             name='Mean'
         )
 
@@ -58,6 +63,7 @@ class XmRChart:
             y=values,
             name=name,
             mode='markers+lines',
+            line=dict(color='gray'),
             marker=dict(
                 size=10,
                 opacity=0.7,
@@ -220,11 +226,9 @@ class IndividualXmR:
 
 
 class SubgroupXR:
-    A2 = 0.729
-    D3 = 0
-    D4 = 2.282
 
     def __init__(self):
+        self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
         self._n = None  # Number of values in each subgroup
         self._x_center_line = None
         self._x_sigma = None
@@ -240,10 +244,6 @@ class SubgroupXR:
         self._r_in_limits = None
         self._x_in_limits = None
 
-    def load_constants(self):
-        """load the constants from a file"""
-        pass
-
     @staticmethod
     def subgroup_range_mean(values):
         """Calculates the mean and the range of each subgroup of measurements"""
@@ -258,15 +258,18 @@ class SubgroupXR:
         if n < 2:
             raise Exception('The number of samples per subgroup must be greater than one.')
         self._n = n
+        A2 = self._constants.constant(n=self._n, name='A2')
+        D3 = self._constants.constant(n=self._n, name='D3')
+        D4 = self._constants.constant(n=self._n, name='D4')
         subgroup_means, subgroup_ranges = self.subgroup_range_mean(values)
         mean_range = np.mean(subgroup_ranges)
         self._x_center_line = np.mean(values)
-        self._x_sigma = SubgroupXR.A2 * mean_range
+        self._x_sigma = A2 * mean_range
         self._x_upper_limit = self._x_center_line + self._x_sigma
         self._x_lower_limit = self._x_center_line - self._x_sigma
         self._r_center_line = mean_range
-        self._r_upper_limit = mean_range * SubgroupXR.D4
-        self._r_lower_limit = mean_range * SubgroupXR.D3
+        self._r_upper_limit = mean_range * D4
+        self._r_lower_limit = mean_range * D3
         self._fitted = True
 
     def predict(self, values, labels):
@@ -317,6 +320,18 @@ class SubgroupXR:
             'R lower limit': self._r_lower_limit
         }
 
+    @property
+    def out_of_control(self):
+        df = pd.DataFrame(
+            data={
+                'labels': self._labels,
+                'subgroup_mean': self._subgroup_means,
+                'subgroup_range': self._subgroup_ranges,
+                'subgroup_mean_within_limits': self._x_in_limits,
+                'subgroup_range_within_limits': self._r_in_limits
+            }
+        )
+        return df[~df['x_status'] | ~df['mr_status']]
 
 if __name__ == '__main__':
     test_x = np.array([39, 41, 41, 41, 43, 55, 41, 42, 40, 41, 44, 40])
