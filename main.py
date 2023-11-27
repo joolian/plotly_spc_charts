@@ -7,13 +7,14 @@ from spc_charts import Constants
 from pprint import pprint
 
 
-class XmRChart:
+class MRChart:
     """Average and range chart"""
 
-    def __init__(self, x, y, mean_x, x_status, upper_limit_x, lower_limit_x, x_moving_range, mr_status, lower_limit_r,
+    def __init__(self, x, labels, mean_x, x_status, upper_limit_x, lower_limit_x, x_moving_range, mr_status, lower_limit_r,
                  upper_limit_r, mean_r, title, show_r=True):
         self._x = x
-        self._y = y
+        self._labels = labels
+        self._y = np.arange(1, x.shape[0], 1)
         self._mean_x = mean_x
         self._x_status = x_status
         self._mr_status = mr_status
@@ -58,23 +59,34 @@ class XmRChart:
             name='Mean'
         )
 
-    def _value_trace(self, values, status, name):
+    def _value_trace(self, values, status, labels):
         return go.Scatter(
             x=self._y,
             y=values,
-            name=name,
+            name='',
             mode='markers+lines',
             line=dict(color='gray'),
             marker=dict(
                 size=10,
                 opacity=0.7,
                 color=self._set_marker_colours(status)
-            )
+            ),
+            customdata=labels,
+            hovertemplate='<b>%{customdata[0]}</b><br>%{customdata[1]}',
+
         )
 
     def _draw(self):
+        x_data_labels = list(zip(
+            self._labels,
+            ['Mean: ' + str(x) for x in self._x]
+        ))
+        r_data_labels = list(zip(
+            self._labels,
+            ['Range: ' + str(x) for x in self._x_moving_range]
+        ))
         self._fig.add_trace(
-            self._value_trace(values=self._x, status=self._x_status, name='values'),
+            self._value_trace(values=self._x, status=self._x_status, labels=x_data_labels),
             row=1, col=1
         )
         self._fig.add_trace(self._control_limit_trace(self._lower_limit_x, 'LCL'), row=1, col=1)
@@ -82,18 +94,18 @@ class XmRChart:
         self._fig.add_trace(self._mean_trace(self._mean_x), row=1, col=1)
 
         self._fig.add_trace(
-            self._value_trace(values=self._x_moving_range, status=self._mr_status, name='moving_range'),
+            self._value_trace(values=self._x_moving_range, status=self._mr_status, labels=r_data_labels),
             row=2, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._upper_limit_r, 'mean'), row=2, col=1)
-        self._fig.add_trace(self._control_limit_trace(self._lower_limit_r, 'mean'), row=2, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._upper_limit_r, 'UCL'), row=2, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._lower_limit_r, 'LCL'), row=2, col=1)
         self._fig.add_trace(self._mean_trace(self._mean_r), row=2, col=1)
 
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
-        self._fig.update_xaxes(title_text="measurement", showgrid=False, row=2, col=1)
-        self._fig.update_yaxes(title_text="Individual values", showgrid=False, row=1, col=1)
-        self._fig.update_yaxes(title_text="Moving range", showgrid=False, row=2, col=1)
+        # self._fig.update_xaxes(title_text="measurement", showgrid=False, row=2, col=1)
+        self._fig.update_yaxes(title_text="X", showgrid=False, row=1, col=1)
+        self._fig.update_yaxes(title_text="R", showgrid=False, row=2, col=1)
         self._fig.show()
         # pprint(self._fig.to_json())
 
@@ -102,7 +114,7 @@ class XmRChart:
     #     self._fig.show()
 
 
-class IndividualXmR:
+class IndividualMR:
     """Calculates the data required to create an Average and range chart for individual values."""
     # Constants for subgroups of size n=2
     d2 = 1.128
@@ -180,10 +192,10 @@ class IndividualXmR:
         """
         self._mean_x = np.mean(self._control_y)
         average_moving_range = np.mean(self.moving_ranges(self._control_y))
-        process_limit = 3 / IndividualXmR.d2 * average_moving_range
+        process_limit = 3 / IndividualMR.d2 * average_moving_range
         self._upper_limit_x = self._mean_x + process_limit
         self._lower_limit_x = self._mean_x - process_limit
-        self._upper_limit_r = IndividualXmR.d4 * average_moving_range
+        self._upper_limit_r = IndividualMR.d4 * average_moving_range
         self._mean_r = average_moving_range
 
     @property
@@ -231,7 +243,7 @@ class IndividualXmR:
         return df[~df['x_status'] | ~df['mr_status']]
 
 
-class SubgroupXR:
+class MR:
 
     def __init__(self):
         self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
@@ -296,9 +308,9 @@ class SubgroupXR:
         if the chart does exist then update it
 
         """
-        self._chart = XmRChart(
+        self._chart = MRChart(
             x=self._subgroup_means,
-            y=labels,
+            labels=labels,
             mean_x=self._x_center_line,
             x_status=self._x_in_limits,
             upper_limit_x=self._x_upper_limit,
@@ -313,7 +325,6 @@ class SubgroupXR:
 
     def _update_chart(self):
         pass
-
 
     @staticmethod
     def within_limits(values, upper_limit, lower_limit):
@@ -355,7 +366,7 @@ class SubgroupXR:
 if __name__ == '__main__':
     test_x = np.array([39, 41, 41, 41, 43, 55, 41, 42, 40, 41, 44, 40])
     test_y = np.array(np.arange(1, np.shape(test_x)[0] + 1, 1, dtype=int))
-    ic = IndividualXmR()
+    ic = IndividualMR()
     ic.fit(test_x, test_y)
     ic.predict(test_x, test_y)
     # spc_chart = XmRChart(
@@ -373,10 +384,10 @@ if __name__ == '__main__':
     # )
 
 data = pd.read_excel('control chart data.xlsx')
-labels = data['Subgroup'].to_numpy()
+labels = data['labels'].to_numpy()
 n = 4
 values = data.iloc[:, 1:n + 1:1].to_numpy()
-xr = SubgroupXR()
+xr = MR()
 xr.fit(values=values, labels=labels)
 print(xr.control_limits)
 xr.predict(values, labels)
