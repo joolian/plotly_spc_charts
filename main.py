@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from pathlib import Path
 from spc_charts import Constants
+from pprint import pprint
 
 
 class XmRChart:
@@ -94,6 +95,11 @@ class XmRChart:
         self._fig.update_yaxes(title_text="Individual values", showgrid=False, row=1, col=1)
         self._fig.update_yaxes(title_text="Moving range", showgrid=False, row=2, col=1)
         self._fig.show()
+        # pprint(self._fig.to_json())
+
+    # def update(self):
+    #     self._fig.update_traces(x=[1,2,3,4,5], selector=dict(name="values"))
+    #     self._fig.show()
 
 
 class IndividualXmR:
@@ -243,6 +249,7 @@ class SubgroupXR:
         self._labels = None  # TODO this is unsatisfactory
         self._r_in_limits = None
         self._x_in_limits = None
+        self._chart = None
 
     @staticmethod
     def subgroup_range_mean(values):
@@ -279,10 +286,17 @@ class SubgroupXR:
         self._subgroup_means, self._subgroup_ranges = self.subgroup_range_mean(values)
         self._r_in_limits = self.within_limits(self._subgroup_ranges, self._r_upper_limit, self._r_lower_limit)
         self._x_in_limits = self.within_limits(self._subgroup_means, self._x_upper_limit, self._x_lower_limit)
-        return ''
+        # if self._chart:
+        #     self._chart.update()
 
     def plot(self):
-        XmRChart(
+        """
+        For the predict method:
+        if the chart does not exist then create it
+        if the chart does exist then update it
+
+        """
+        self._chart = XmRChart(
             x=self._subgroup_means,
             y=labels,
             mean_x=self._x_center_line,
@@ -296,6 +310,10 @@ class SubgroupXR:
             mean_r=self._r_center_line,
             title='Thickness'
         )
+
+    def _update_chart(self):
+        pass
+
 
     @staticmethod
     def within_limits(values, upper_limit, lower_limit):
@@ -332,6 +350,7 @@ class SubgroupXR:
             }
         )
         return df[~df['x_status'] | ~df['mr_status']]
+
 
 if __name__ == '__main__':
     test_x = np.array([39, 41, 41, 41, 43, 55, 41, 42, 40, 41, 44, 40])
