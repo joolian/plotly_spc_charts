@@ -11,7 +11,7 @@ class MRChart:
     """Average and range chart"""
 
     def __init__(self, x, labels, mean_x, x_status, upper_limit_x, lower_limit_x, x_moving_range, mr_status, lower_limit_r,
-                 upper_limit_r, mean_r, title, show_r=True):
+                 upper_limit_r, mean_r, title, x_title, r_title, width, height):
         self._x = x
         self._labels = labels
         self._y = np.arange(1, x.shape[0], 1)
@@ -25,11 +25,16 @@ class MRChart:
         self._lower_limit_r = lower_limit_r
         self._mean_r = mean_r
         self._title = title
+        self._x_title = x_title
+        self._r_title = r_title
+        self._width = width
+        self._height = height
+
         self._fig = make_subplots(rows=2, cols=1, shared_xaxes=True)
         self._draw()
 
     @staticmethod
-    def _set_marker_colours(status):
+    def _marker_colors(status):
         things = np.where(status, 'green', 'red')
         return things
 
@@ -39,6 +44,7 @@ class MRChart:
         return go.Scatter(
             x=control_limit_x,
             y=control_limit_y,
+            hoverinfo='skip',
             name=name,
             mode='lines',
             line=dict(
@@ -55,11 +61,12 @@ class MRChart:
             x=control_limit_x,
             y=control_limit_y,
             mode='lines',
+            hoverinfo='skip',
             line=dict(color='black', width=1),
             name='Mean'
         )
 
-    def _value_trace(self, values, status, labels):
+    def _value_trace(self, values, status, marker_labels):
         return go.Scatter(
             x=self._y,
             y=values,
@@ -69,24 +76,28 @@ class MRChart:
             marker=dict(
                 size=10,
                 opacity=0.7,
-                color=self._set_marker_colours(status)
+                color=self._marker_colors(status)
             ),
-            customdata=labels,
+            customdata=marker_labels,
             hovertemplate='<b>%{customdata[0]}</b><br>%{customdata[1]}',
 
         )
 
+    def _marker_labels(self, axis_title, values):
+        return list(
+            zip(
+                self._labels,
+                [f'{axis_title}: ' + str(value) for value in values]
+            )
+        )
+
     def _draw(self):
-        x_data_labels = list(zip(
-            self._labels,
-            ['Mean: ' + str(x) for x in self._x]
-        ))
-        r_data_labels = list(zip(
-            self._labels,
-            ['Range: ' + str(x) for x in self._x_moving_range]
-        ))
         self._fig.add_trace(
-            self._value_trace(values=self._x, status=self._x_status, labels=x_data_labels),
+            self._value_trace(
+                values=self._x,
+                status=self._x_status,
+                marker_labels=self._marker_labels(self._x_title, self._x)
+            ),
             row=1, col=1
         )
         self._fig.add_trace(self._control_limit_trace(self._lower_limit_x, 'LCL'), row=1, col=1)
@@ -94,28 +105,28 @@ class MRChart:
         self._fig.add_trace(self._mean_trace(self._mean_x), row=1, col=1)
 
         self._fig.add_trace(
-            self._value_trace(values=self._x_moving_range, status=self._mr_status, labels=r_data_labels),
+            self._value_trace(
+                values=self._x_moving_range,
+                status=self._mr_status,
+                marker_labels=self._marker_labels(self._r_title, self._x_moving_range)
+            ),
             row=2, col=1
         )
         self._fig.add_trace(self._control_limit_trace(self._upper_limit_r, 'UCL'), row=2, col=1)
         self._fig.add_trace(self._control_limit_trace(self._lower_limit_r, 'LCL'), row=2, col=1)
         self._fig.add_trace(self._mean_trace(self._mean_r), row=2, col=1)
-
-        self._fig.update_layout(title=self._title, template='simple_white', showlegend=False)
+        self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width, height=self._height)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
-        # self._fig.update_xaxes(title_text="measurement", showgrid=False, row=2, col=1)
-        self._fig.update_yaxes(title_text="X", showgrid=False, row=1, col=1)
-        self._fig.update_yaxes(title_text="R", showgrid=False, row=2, col=1)
+        self._fig.update_yaxes(title_text=self._x_title, showgrid=False, row=1, col=1)
+        self._fig.update_yaxes(title_text=self._r_title, showgrid=False, row=2, col=1)
         self._fig.show()
-        # pprint(self._fig.to_json())
 
-    # def update(self):
-    #     self._fig.update_traces(x=[1,2,3,4,5], selector=dict(name="values"))
-    #     self._fig.show()
+    def save(self, path):
+        self._fig.write_image(path)
 
 
 class IndividualMR:
-    """Calculates the data required to create an Average and range chart for individual values."""
+    """Calculates the data required to create an Average and moving range chart for individual values."""
     # Constants for subgroups of size n=2
     d2 = 1.128
     d4 = 3.268
@@ -245,8 +256,11 @@ class IndividualMR:
 
 class MR:
 
-    def __init__(self):
+    def __init__(self, chart_width=800, chart_height=600):
+        self._chart_width = chart_width
+        self._chart_height = chart_height
         self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
+
         self._n = None  # Number of values in each subgroup
         self._x_center_line = None
         self._x_sigma = None
@@ -270,7 +284,7 @@ class MR:
         subgroup_ranges = np.abs(np.max(values, axis=1) - np.min(values, axis=1))
         return subgroup_means, subgroup_ranges
 
-    def fit(self, values, labels):
+    def fit(self, values):
         if not isinstance(values, np.ndarray):
             raise Exception(f'Values must be a numpy array, not {type(values)}')
         subgroups, n = values.shape
@@ -320,11 +334,22 @@ class MR:
             upper_limit_r=self._r_upper_limit,
             lower_limit_r=self._r_lower_limit,
             mean_r=self._r_center_line,
-            title='Thickness'
+            title='Thickness',
+            # x_title='\u0078\u0304', # X with bar
+            x_title='Average',
+            r_title='Range',
+            width=self._chart_width,
+            height=self._chart_height
         )
 
     def _update_chart(self):
         pass
+
+    def save_chart(self, path):
+        if self._chart:
+            self._chart.save(path)
+        else:
+            raise Exception('Error: the chart must be plotted before it can be saved')
 
     @staticmethod
     def within_limits(values, upper_limit, lower_limit):
@@ -387,8 +412,9 @@ data = pd.read_excel('control chart data.xlsx')
 labels = data['labels'].to_numpy()
 n = 4
 values = data.iloc[:, 1:n + 1:1].to_numpy()
-xr = MR()
-xr.fit(values=values, labels=labels)
+xr = MR(chart_width=1000, chart_height=800)
+xr.fit(values=values)
 print(xr.control_limits)
 xr.predict(values, labels)
 xr.plot()
+xr.save_chart(Path('chart.svg'))
