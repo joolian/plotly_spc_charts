@@ -36,21 +36,20 @@ class Constants:
 class MRChart:
     """Plotly chart for X and R"""
 
-    def __init__(self, x, labels, mean_x, x_status, upper_limit_x, lower_limit_x, x_moving_range, mr_status,
-                 lower_limit_r,
-                 upper_limit_r, mean_r, title, x_title, r_title, width, height):
-        self._x = x
+    def __init__(self, x_values, labels, x_center, x_status, x_upper_limit, x_lower_limit, r_values, r_status,
+                 r_lower_limit, r_upper_limit, r_center, title, x_title, r_title, width, height):
+        self._x_values = x_values
         self._labels = labels
-        self._y = np.arange(1, x.shape[0], 1)
-        self._mean_x = mean_x
+        self._y = np.arange(1, self._x_values.shape[0], 1)
+        self._x_center = x_center
         self._x_status = x_status
-        self._mr_status = mr_status
-        self._upper_limit_x = upper_limit_x
-        self._lower_limit_x = lower_limit_x
-        self._x_moving_range = x_moving_range
-        self._upper_limit_r = upper_limit_r
-        self._lower_limit_r = lower_limit_r
-        self._mean_r = mean_r
+        self._r_status = r_status
+        self._x_upper_limit = x_upper_limit
+        self._x_lower_limit = x_lower_limit
+        self._r_values = r_values
+        self._r_upper_limit = r_upper_limit
+        self._r_lower_limit = r_lower_limit
+        self._r_center = r_center
         self._title = title
         self._x_title = x_title
         self._r_title = r_title
@@ -121,27 +120,27 @@ class MRChart:
     def _draw(self):
         self._fig.add_trace(
             self._value_trace(
-                values=self._x,
+                values=self._x_values,
                 status=self._x_status,
-                marker_labels=self._marker_labels(self._x_title, self._x)
+                marker_labels=self._marker_labels(self._x_title, self._x_values)
             ),
             row=1, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._lower_limit_x, 'LCL'), row=1, col=1)
-        self._fig.add_trace(self._control_limit_trace(self._upper_limit_x, 'UCL'), row=1, col=1)
-        self._fig.add_trace(self._mean_trace(self._mean_x), row=1, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._x_lower_limit, 'LCL'), row=1, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._x_upper_limit, 'UCL'), row=1, col=1)
+        self._fig.add_trace(self._mean_trace(self._x_center), row=1, col=1)
 
         self._fig.add_trace(
             self._value_trace(
-                values=self._x_moving_range,
-                status=self._mr_status,
-                marker_labels=self._marker_labels(self._r_title, self._x_moving_range)
+                values=self._r_values,
+                status=self._r_status,
+                marker_labels=self._marker_labels(self._r_title, self._r_values)
             ),
             row=2, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._upper_limit_r, 'UCL'), row=2, col=1)
-        self._fig.add_trace(self._control_limit_trace(self._lower_limit_r, 'LCL'), row=2, col=1)
-        self._fig.add_trace(self._mean_trace(self._mean_r), row=2, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._r_upper_limit, 'UCL'), row=2, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._r_lower_limit, 'LCL'), row=2, col=1)
+        self._fig.add_trace(self._mean_trace(self._r_center), row=2, col=1)
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width,
                                 height=self._height)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
@@ -153,8 +152,8 @@ class MRChart:
         self._fig.write_image(path)
 
 
-class MR:
-
+class XbarR:
+    """For the production of Average and Range Shewart charts from subgroups of data."""
     def __init__(self, chart_width=800, chart_height=600):
         self._chart_width = chart_width
         self._chart_height = chart_height
@@ -184,6 +183,7 @@ class MR:
         return subgroup_means, subgroup_ranges
 
     def fit(self, values):
+        """Calculates the control limits for average and range charts"""
         if not isinstance(values, np.ndarray):
             raise Exception(f'Values must be a numpy array, not {type(values)}')
         subgroups, n = values.shape
@@ -205,6 +205,11 @@ class MR:
         self._fitted = True
 
     def predict(self, values, labels):
+        """
+        Transform subgroup data into average and moving range values for plotting
+        on a chart. Labels which data is out of control.
+        """
+
         if not self._fitted:
             raise Exception('Chart has not been fitted')
         self._labels = labels
@@ -216,23 +221,20 @@ class MR:
 
     def plot(self):
         """
-        For the predict method:
-        if the chart does not exist then create it
-        if the chart does exist then update it
-
+        Plots the average and range values on a chart
         """
         self._chart = MRChart(
-            x=self._subgroup_means,
+            x_values=self._subgroup_means,
             labels=self._labels,
-            mean_x=self._x_center_line,
+            x_center=self._x_center_line,
             x_status=self._x_in_limits,
-            upper_limit_x=self._x_upper_limit,
-            lower_limit_x=self._x_lower_limit,
-            x_moving_range=self._subgroup_ranges,
-            mr_status=self._r_in_limits,
-            upper_limit_r=self._r_upper_limit,
-            lower_limit_r=self._r_lower_limit,
-            mean_r=self._r_center_line,
+            x_upper_limit=self._x_upper_limit,
+            x_lower_limit=self._x_lower_limit,
+            r_values=self._subgroup_ranges,
+            r_status=self._r_in_limits,
+            r_upper_limit=self._r_upper_limit,
+            r_lower_limit=self._r_lower_limit,
+            r_center=self._r_center_line,
             title='Thickness',
             # x_title='\u0078\u0304', # X with bar
             x_title='Average',
@@ -245,6 +247,7 @@ class MR:
         pass
 
     def save_chart(self, path):
+        """Saves an image of the chart to a file"""
         if self._chart:
             self._chart.save(path)
         else:
@@ -263,6 +266,7 @@ class MR:
 
     @property
     def control_limits(self):
+        """Returns the values of the control limits and means"""
         return {
             'X center line': self._x_center_line,
             'X sigma': self._x_sigma,
@@ -275,6 +279,7 @@ class MR:
 
     @property
     def out_of_control(self):
+        """Returns a DataFrame listing the values that ar out of control"""
         df = pd.DataFrame(
             data={
                 'labels': self._labels,
@@ -284,7 +289,7 @@ class MR:
                 'subgroup_range_within_limits': self._r_in_limits
             }
         )
-        return df[~df['x_status'] | ~df['mr_status']]
+        return df[~df['x_status'] | ~df['r_status']]
 
 
 class IndividualMR:
@@ -297,15 +302,15 @@ class IndividualMR:
         self._control_x = None
         self._control_y = None
         self._mean_x = None
-        self._upper_limit_x = None
-        self._lower_limit_x = None
-        self._upper_limit_r = None
-        self._mean_r = None
+        self._x_upper_limit = None
+        self._x_lower_limit = None
+        self._r_upper_limit = None
+        self._r_center = None
         self._x = None
         self._y = None
-        self._x_moving_range = None
+        self._r_values = None
         self._x_status = None
-        self._mr_status = None
+        self._r_status = None
         self._fitted = False
 
     def fit(self, control_y, control_x):
@@ -330,8 +335,8 @@ class IndividualMR:
         self._x = x
         self._y = y
         self._x_moving_range = np.concatenate(([np.NAN], self.moving_ranges(self._x)))
-        self._x_status = self.x_in_control(x, self._upper_limit_x, self._lower_limit_x)
-        self._mr_status = self.mr_in_control(self._x_moving_range, self._upper_limit_r)
+        self._x_status = self.x_in_control(x, self._x_upper_limit, self._x_lower_limit)
+        self._r_status = self.mr_in_control(self._x_moving_range, self._r_upper_limit)
 
     @staticmethod
     def x_in_control(values, upper_limit, lower_limit):
@@ -366,9 +371,9 @@ class IndividualMR:
         self._mean_x = np.mean(self._control_y)
         average_moving_range = np.mean(self.moving_ranges(self._control_y))
         process_limit = 3 / IndividualMR.d2 * average_moving_range
-        self._upper_limit_x = self._mean_x + process_limit
-        self._lower_limit_x = self._mean_x - process_limit
-        self._upper_limit_r = IndividualMR.d4 * average_moving_range
+        self._x_upper_limit = self._mean_x + process_limit
+        self._x_lower_limit = self._mean_x - process_limit
+        self._r_upper_limit = IndividualMR.d4 * average_moving_range
         self._mean_r = average_moving_range
 
     @property
@@ -376,16 +381,16 @@ class IndividualMR:
         return self._mean_x
 
     @property
-    def upper_limit_x(self):
-        return self._upper_limit_x
+    def x_upper_limit(self):
+        return self._x_upper_limit
 
     @property
-    def lower_limit_x(self):
-        return self._lower_limit_x
+    def x_lower_limit(self):
+        return self._x_lower_limit
 
     @property
-    def upper_limit_r(self):
-        return self._upper_limit_r
+    def r_upper_limit(self):
+        return self._r_upper_limit
 
     @property
     def mean_r(self):
@@ -400,8 +405,8 @@ class IndividualMR:
         return self._x_status
 
     @property
-    def mr_status(self):
-        return self._mr_status
+    def r_status(self):
+        return self._r_status
 
     @property
     def out_of_control_x(self):
@@ -410,7 +415,7 @@ class IndividualMR:
                 'x': self._x,
                 'y': self._y,
                 'x_status': self._x_status,
-                'mr_status': self._mr_status
+                'r_status': self._r_status
             }
         )
         return df[~df['x_status'] | ~df['mr_status']]

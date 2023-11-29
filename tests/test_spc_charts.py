@@ -24,3 +24,12 @@ class TestConstants:
         f = Constants(constants_path)
         with pytest.raises(Exception, match='[Cannot find thing for]'):
             f.constant(n=n, name=name)
+
+
+class TestXbarR:
+
+    def test_fit(self):
+        assert False
+    
+    def test_predict(self):
+        assert False
