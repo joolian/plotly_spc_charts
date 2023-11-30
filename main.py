@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from spc_charts import MR, IndividualMR
+from spc_charts import XbarR, IndividualMR
 
 if __name__ == '__main__':
     test_x = np.array([39, 41, 41, 41, 43, 55, 41, 42, 40, 41, 44, 40])
@@ -25,13 +25,15 @@ if __name__ == '__main__':
     #     title='Individual and Moving Range Chart for Rail Cars',
     # )
 
-    data = pd.read_excel('control chart data.xlsx')
+    data = pd.read_excel(Path(__file__).parent / 'tests/control_chart_example_data.xlsx', sheet_name='Data')
     labels = data['labels'].to_numpy()
     n = 4
     values = data.iloc[:, 1:n + 1:1].to_numpy()
-    xr = MR(chart_width=1000, chart_height=800)
+    xr = XbarR(chart_width=1000, chart_height=800)
     xr.fit(values=values)
     print(xr.control_limits)
     xr.predict(values, labels)
     xr.plot()
     xr.save_chart(Path('chart.svg'))
+    print(xr.out_of_control)
+

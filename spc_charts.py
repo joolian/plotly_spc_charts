@@ -6,6 +6,20 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
+def is_array(values):
+    if not isinstance(values, np.ndarray):
+        raise TypeError(f'Values must be a numpy array, not {type(values)}')
+
+
+def array_missing_values(values):
+    if np.any(pd.isna(values)):
+        raise ValueError('There are missing values.')
+
+def equal_columns(array1, array2):
+    pass
+
+
+
 class Constants:
     """Represents a table of constants"""
 
@@ -40,7 +54,7 @@ class MRChart:
                  r_lower_limit, r_upper_limit, r_center, title, x_title, r_title, width, height):
         self._x_values = x_values
         self._labels = labels
-        self._y = np.arange(1, self._x_values.shape[0], 1)
+        self._y = np.arange(1, self._x_values.shape[0]+1, 1)
         self._x_center = x_center
         self._x_status = x_status
         self._r_status = r_status
@@ -61,8 +75,7 @@ class MRChart:
 
     @staticmethod
     def _marker_colors(status):
-        things = np.where(status, 'green', 'red')
-        return things
+        return np.where(status, 'green', 'red')
 
     def _control_limit_trace(self, limit, name):
         control_limit_x = [min(self._y), max(self._y)]
@@ -184,11 +197,14 @@ class XbarR:
 
     def fit(self, values):
         """Calculates the control limits for average and range charts"""
-        if not isinstance(values, np.ndarray):
-            raise Exception(f'Values must be a numpy array, not {type(values)}')
+        # if not isinstance(values, np.ndarray):
+        #     raise Exception(f'Error: values must be a numpy array, not {type(values)}')
+        is_array(values)
+        array_missing_values(values)
         subgroups, n = values.shape
         if n < 2:
-            raise Exception('The number of samples per subgroup must be greater than one.')
+            raise ValueError('The number of samples per subgroup must be greater than one.')
+
         self._n = n
         A2 = self._constants.constant(n=self._n, name='A2')
         D3 = self._constants.constant(n=self._n, name='D3')
@@ -209,15 +225,20 @@ class XbarR:
         Transform subgroup data into average and moving range values for plotting
         on a chart. Labels which data is out of control.
         """
-
         if not self._fitted:
-            raise Exception('Chart has not been fitted')
+            raise Exception('Error: chart has not been fitted')
+        is_array(values)
+        is_array(labels)
+        array_missing_values(values)
+        if not values.shape[1] == self._n:
+            raise ValueError(f'Error: the number of subgroups must be the same as that used to calculate the control limits ({self._n})')
+        subgroups, n = values.shape
+        if n < 2:
+            raise Exception('Error: the number of samples per subgroup must be greater than one.')
         self._labels = labels
         self._subgroup_means, self._subgroup_ranges = self.subgroup_range_mean(values)
         self._r_in_limits = self.within_limits(self._subgroup_ranges, self._r_upper_limit, self._r_lower_limit)
         self._x_in_limits = self.within_limits(self._subgroup_means, self._x_upper_limit, self._x_lower_limit)
-        # if self._chart:
-        #     self._chart.update()
 
     def plot(self):
         """
@@ -289,7 +310,13 @@ class XbarR:
                 'subgroup_range_within_limits': self._r_in_limits
             }
         )
-        return df[~df['x_status'] | ~df['r_status']]
+        return df[~df['subgroup_mean_within_limits'] | ~df['subgroup_range_within_limits']]
+
+
+    @property
+    def averages_ranges(self):
+        return self._subgroup_means, self._subgroup_ranges
+
 
 
 class IndividualMR:
