@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import json
 
 
 def is_array(values):
@@ -14,10 +15,6 @@ def is_array(values):
 def array_missing_values(values):
     if np.any(pd.isna(values)):
         raise ValueError('There are missing values.')
-
-def equal_columns(array1, array2):
-    pass
-
 
 
 class Constants:
@@ -154,6 +151,7 @@ class MRChart:
         self._fig.add_trace(self._control_limit_trace(self._r_upper_limit, 'UCL'), row=2, col=1)
         self._fig.add_trace(self._control_limit_trace(self._r_lower_limit, 'LCL'), row=2, col=1)
         self._fig.add_trace(self._mean_trace(self._r_center), row=2, col=1)
+
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width,
                                 height=self._height)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
@@ -167,7 +165,10 @@ class MRChart:
 
 class XbarR:
     """For the production of Average and Range Shewart charts from subgroups of data."""
-    def __init__(self, chart_width=800, chart_height=600):
+    def __init__(self, title='', r_title='Range', x_title='Average',chart_width=800, chart_height=600):
+        self._title = title
+        self._x_title = x_title
+        self._r_title = r_title
         self._chart_width = chart_width
         self._chart_height = chart_height
         self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
@@ -204,7 +205,6 @@ class XbarR:
         subgroups, n = values.shape
         if n < 2:
             raise ValueError('The number of samples per subgroup must be greater than one.')
-
         self._n = n
         A2 = self._constants.constant(n=self._n, name='A2')
         D3 = self._constants.constant(n=self._n, name='D3')
@@ -218,6 +218,20 @@ class XbarR:
         self._r_center_line = mean_range
         self._r_upper_limit = mean_range * D4
         self._r_lower_limit = mean_range * D3
+        self._fitted = True
+
+    def set_model(self, n, x_upper_limit, x_lower_limit, x_center_line, r_upper_limit, r_lower_limit, r_center_line, title, x_title, r_title):
+        """ Sets the parameters for the chart"""
+        self._n = n
+        self._x_upper_limit = x_upper_limit
+        self._x_lower_limit = x_lower_limit
+        self._x_center_line = x_center_line
+        self._r_upper_limit = r_upper_limit
+        self._r_lower_limit = r_lower_limit
+        self._r_center_line = r_center_line
+        self._title = title
+        self._x_title = x_title
+        self._r_title = r_title
         self._fitted = True
 
     def predict(self, values, labels):
@@ -256,10 +270,10 @@ class XbarR:
             r_upper_limit=self._r_upper_limit,
             r_lower_limit=self._r_lower_limit,
             r_center=self._r_center_line,
-            title='Thickness',
+            title=self._title,
             # x_title='\u0078\u0304', # X with bar
-            x_title='Average',
-            r_title='Range',
+            x_title=self._x_title,
+            r_title=self._r_title,
             width=self._chart_width,
             height=self._chart_height
         )
@@ -285,6 +299,24 @@ class XbarR:
         """
         return (values > lower_limit) & (values < upper_limit)
 
+    def save(self, path):
+        if not self._chart:
+            raise Exception('Error: the chart must be fitted before it can be saved')
+        params = {
+            'n': self._n,
+            'x_upper_limit': self._x_upper_limit,
+            'x_lower_limit': self._x_lower_limit,
+            'x_center_line': self._x_center_line,
+            'r_upper_limit': self._r_upper_limit,
+            'r_lower_limit': self._r_lower_limit,
+            'r_center_line': self._r_center_line,
+            'title':self._title,
+            'x_title': self._x_title,
+            'r_title': self._r_title
+        }
+        with open(path, 'w') as fp:
+            json.dump(params, fp)
+
     @property
     def control_limits(self):
         """Returns the values of the control limits and means"""
@@ -300,149 +332,148 @@ class XbarR:
 
     @property
     def out_of_control(self):
-        """Returns a DataFrame listing the values that ar out of control"""
+        """Returns a DataFrame listing the values that are out of control"""
         df = pd.DataFrame(
             data={
                 'labels': self._labels,
-                'subgroup_mean': self._subgroup_means,
-                'subgroup_range': self._subgroup_ranges,
-                'subgroup_mean_within_limits': self._x_in_limits,
-                'subgroup_range_within_limits': self._r_in_limits
+                'mean': self._subgroup_means,
+                'range': self._subgroup_ranges,
+                'mean_within_limits': self._x_in_limits,
+                'range_within_limits': self._r_in_limits
             }
         )
-        return df[~df['subgroup_mean_within_limits'] | ~df['subgroup_range_within_limits']]
-
+        return df[~df['mean_within_limits'] | ~df['range_within_limits']]
 
     @property
     def averages_ranges(self):
         return self._subgroup_means, self._subgroup_ranges
 
 
-
-class IndividualMR:
-    """Calculates the data required to create an Average and moving range chart for individual values."""
-    # Constants for subgroups of size n=2
-    d2 = 1.128
-    d4 = 3.268
-
-    def __init__(self):
-        self._control_x = None
-        self._control_y = None
-        self._mean_x = None
-        self._x_upper_limit = None
-        self._x_lower_limit = None
-        self._r_upper_limit = None
-        self._r_center = None
-        self._x = None
-        self._y = None
-        self._r_values = None
-        self._x_status = None
-        self._r_status = None
-        self._fitted = False
-
-    def fit(self, control_y, control_x):
-        """
-        Calculates the control chart limits.
-
-        :param control_y: Array of the values of the quality
-        :param control_x: Integer index of the values
-        """
-        self._control_x = control_x
-        self._control_y = control_y
-        self._calculate_limits()
-        self._fitted = True
-
-    def predict(self, x, y):
-        """
-        Calculates the maving ranges for the values and determins which values
-        are out of control
-        """
-        if not self._fitted:
-            raise Exception('Not fitted')
-        self._x = x
-        self._y = y
-        self._x_moving_range = np.concatenate(([np.NAN], self.moving_ranges(self._x)))
-        self._x_status = self.x_in_control(x, self._x_upper_limit, self._x_lower_limit)
-        self._r_status = self.mr_in_control(self._x_moving_range, self._r_upper_limit)
-
-    @staticmethod
-    def x_in_control(values, upper_limit, lower_limit):
-        """
-        Is each value within the control limits?
-        :param values: array of values
-        :param upper_limit: the upper control limit
-        :param lower_limit: the lower control limit
-        :return: boolean array
-        """
-        return (values > lower_limit) & (values < upper_limit)
-
-    @staticmethod
-    def mr_in_control(values, upper_limit):
-        """Is each value of the moving range less than the upper control limit"""
-        return (values < upper_limit) | (np.isnan(values))
-
-    @staticmethod
-    def moving_ranges(values):
-        """
-        Calculates the moving ranges for a single dimension array
-        :param values: single dimension array of values
-        :return: numpy array
-        """
-        return np.abs(np.ediff1d(values))
-
-    def _calculate_limits(self):
-        """
-        Calculates the control limits and centers for Individual and
-        Moving Range Charts.
-        """
-        self._mean_x = np.mean(self._control_y)
-        average_moving_range = np.mean(self.moving_ranges(self._control_y))
-        process_limit = 3 / IndividualMR.d2 * average_moving_range
-        self._x_upper_limit = self._mean_x + process_limit
-        self._x_lower_limit = self._mean_x - process_limit
-        self._r_upper_limit = IndividualMR.d4 * average_moving_range
-        self._mean_r = average_moving_range
-
-    @property
-    def mean_x(self):
-        return self._mean_x
-
-    @property
-    def x_upper_limit(self):
-        return self._x_upper_limit
-
-    @property
-    def x_lower_limit(self):
-        return self._x_lower_limit
-
-    @property
-    def r_upper_limit(self):
-        return self._r_upper_limit
-
-    @property
-    def mean_r(self):
-        return self._mean_r
-
-    @property
-    def x_moving_ranges(self):
-        return self._x_moving_range
-
-    @property
-    def x_status(self):
-        return self._x_status
-
-    @property
-    def r_status(self):
-        return self._r_status
-
-    @property
-    def out_of_control_x(self):
-        df = pd.DataFrame(
-            data={
-                'x': self._x,
-                'y': self._y,
-                'x_status': self._x_status,
-                'r_status': self._r_status
-            }
-        )
-        return df[~df['x_status'] | ~df['mr_status']]
+# class IndividualMR:
+#     """Calculates the data required to create an Average and moving range chart for individual values."""
+#     # Constants for subgroups of size n=2
+#     d2 = 1.128
+#     d4 = 3.268
+#
+#     def __init__(self):
+#         self._control_x = None
+#         self._control_y = None
+#         self._mean_x = None
+#         self._x_upper_limit = None
+#         self._x_lower_limit = None
+#         self._r_upper_limit = None
+#         self._r_center = None
+#         self._x = None
+#         self._y = None
+#         self._r_values = None
+#         self._x_status = None
+#         self._r_status = None
+#         self._fitted = False
+#
+#     def fit(self, control_y, control_x):
+#         """
+#         Calculates the control chart limits.
+#
+#         :param control_y: Array of the values of the quality
+#         :param control_x: Integer index of the values
+#         """
+#         self._control_x = control_x
+#         self._control_y = control_y
+#         self._calculate_limits()
+#         self._fitted = True
+#
+#
+#     def predict(self, x, y):
+#         """
+#         Calculates the maving ranges for the values and determins which values
+#         are out of control
+#         """
+#         if not self._fitted:
+#             raise Exception('Not fitted')
+#         self._x = x
+#         self._y = y
+#         self._x_moving_range = np.concatenate(([np.NAN], self.moving_ranges(self._x)))
+#         self._x_status = self.x_in_control(x, self._x_upper_limit, self._x_lower_limit)
+#         self._r_status = self.mr_in_control(self._x_moving_range, self._r_upper_limit)
+#
+#     @staticmethod
+#     def x_in_control(values, upper_limit, lower_limit):
+#         """
+#         Is each value within the control limits?
+#         :param values: array of values
+#         :param upper_limit: the upper control limit
+#         :param lower_limit: the lower control limit
+#         :return: boolean array
+#         """
+#         return (values > lower_limit) & (values < upper_limit)
+#
+#     @staticmethod
+#     def mr_in_control(values, upper_limit):
+#         """Is each value of the moving range less than the upper control limit"""
+#         return (values < upper_limit) | (np.isnan(values))
+#
+#     @staticmethod
+#     def moving_ranges(values):
+#         """
+#         Calculates the moving ranges for a single dimension array
+#         :param values: single dimension array of values
+#         :return: numpy array
+#         """
+#         return np.abs(np.ediff1d(values))
+#
+#     def _calculate_limits(self):
+#         """
+#         Calculates the control limits and centers for Individual and
+#         Moving Range Charts.
+#         """
+#         self._mean_x = np.mean(self._control_y)
+#         average_moving_range = np.mean(self.moving_ranges(self._control_y))
+#         process_limit = 3 / IndividualMR.d2 * average_moving_range
+#         self._x_upper_limit = self._mean_x + process_limit
+#         self._x_lower_limit = self._mean_x - process_limit
+#         self._r_upper_limit = IndividualMR.d4 * average_moving_range
+#         self._mean_r = average_moving_range
+#
+#     @property
+#     def mean_x(self):
+#         return self._mean_x
+#
+#     @property
+#     def x_upper_limit(self):
+#         return self._x_upper_limit
+#
+#     @property
+#     def x_lower_limit(self):
+#         return self._x_lower_limit
+#
+#     @property
+#     def r_upper_limit(self):
+#         return self._r_upper_limit
+#
+#     @property
+#     def mean_r(self):
+#         return self._mean_r
+#
+#     @property
+#     def x_moving_ranges(self):
+#         return self._x_moving_range
+#
+#     @property
+#     def x_status(self):
+#         return self._x_status
+#
+#     @property
+#     def r_status(self):
+#         return self._r_status
+#
+#     @property
+#     def out_of_control_x(self):
+#         df = pd.DataFrame(
+#             data={
+#                 'x': self._x,
+#                 'y': self._y,
+#                 'x_status': self._x_status,
+#                 'r_status': self._r_status
+#             }
+#         )
+#         return df[~df['x_status'] | ~df['mr_status']]
