@@ -12,8 +12,8 @@ Calculation of control limits for an Average and range chart for subgroups:
 Compute the average and range for each subgroup.  
 $\bar{\bar{X}}$ is the average of all the values in the subgroups.  
 $\bar{R}$ is the average the subgroup ranges.  
-$A_{2}$ is the value of the constant corresponding to the subgroup size.
-$D_{3}$ is the value of the constant corresponding to the subgroup size.
+$A_{2}$ is the value of the constant corresponding to the subgroup size.  
+$D_{3}$ is the value of the constant corresponding to the subgroup size.  
 $D_{4}$ is the value of the constant corresponding to the subgroup size.  
 
 $UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
