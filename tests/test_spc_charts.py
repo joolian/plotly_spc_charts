@@ -1,9 +1,11 @@
+import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 from numpy.testing import assert_array_equal
+from pandas.testing import assert_frame_equal
 
 from spc_charts import Constants, XbarR
 
@@ -34,27 +36,32 @@ class TestXbarR:
 
     @pytest.fixture
     def test_data(self):
-        workbook = pd.ExcelFile('control_chart_example_data.xlsx')
-        return pd.read_excel(workbook, 'Data')
+        return pd.read_csv('XbarR_test_data.csv')
 
     @pytest.fixture
     def values_labels(self, test_data):
-        n = 4
-        values = test_data.iloc[:, 1:n + 1:1].to_numpy()
-        labels = test_data['labels'].to_numpy()
+        labels = test_data['Date'].to_numpy()
+        values = test_data[[col for col in test_data.columns.values if 'Pressure' in col]].to_numpy()
         return {'values': values, 'labels': labels}
 
     @pytest.fixture
-    def expected_control_limits(self):
+    def expected_params(self):
         return {
-            'X center line': 4.7625,
-            'X sigma': 2.950818602895,
-            'X upper control limit': 7.713318602895001,
-            'X lower limit': 1.811681397105,
-            'R center line': 4.05,
-            'R upper limit': 9.24230882367,
-            'R lower limit': 0.0
+            "n": 5,
+            "x_upper_limit": 62.6012796460125,
+            "x_lower_limit": 51.882053687320834,
+            "x_center_line": 57.24166666666667,
+            "r_upper_limit": 19.647221223220832,
+            "r_lower_limit": 0.0,
+            "r_center_line": 9.291666666666666,
+            "title": "Water cooling pressure",
+            "x_title": "Subgroup mean",
+            "r_title": "Subgroup range"
         }
+
+    @pytest.fixture
+    def expected_out_of_control(self):
+        return pd.read_csv('XbarR_expected_out_of_control.csv', )
 
     @pytest.fixture
     def expected_means_ranges(self, test_data):
@@ -64,23 +71,16 @@ class TestXbarR:
 
     @pytest.fixture
     def fitted_chart(self, values_labels):
-        chart = XbarR()
+        chart = XbarR(title='Water cooling pressure', x_title='Subgroup mean', r_title='Subgroup range')
         chart.fit(values_labels['values'])
         return chart
 
-    def test_fit(self, values_labels):
-        expected = {
-            'X center line': 4.7625,
-            'X sigma': 2.950818602895,
-            'X upper control limit': 7.713318602895001,
-            'X lower limit': 1.811681397105,
-            'R center line': 4.05,
-            'R upper limit': 9.24230882367,
-            'R lower limit': 0.0
-        }
-        chart = XbarR()
-        chart.fit(values=values_labels['values'])
-        assert chart.control_limits == expected
+    def test_fit(self, fitted_chart, expected_params):
+        fitted_chart.save('model_params.json')
+        with open('model_params.json', 'r') as fp:
+            chart_params = json.load(fp)
+
+        assert chart_params == expected_params
 
     def test_fit_type_error(self):
         with pytest.raises(TypeError, match="Values must be a numpy array, not <class 'list'>"):
@@ -123,17 +123,12 @@ class TestXbarR:
     def test_predict_n(self, fitted_chart):
         with pytest.raises(
                 ValueError,
-                match='Error: the number of subgroups must be the same as that used to calculate the control limits \(4\)'
+                match='Error: the number of subgroups must be the same as that used to calculate the control limits \(5\)'
         ):
             fitted_chart.predict(
                 np.array([[1, 2, 3]]), np.array(['A'])
             )
 
-    def test_out_of_limits(self, fitted_chart, values_labels):
-        values = np.vstack([values_labels['values'], np.array([20, 10, 10, 10])])
-        labels = np.append(values_labels['labels'], 'Z')
-        fitted_chart.predict(values, labels)
-        df = fitted_chart.out_of_control
-        assert not df.iloc[0][3]
-        assert not df.iloc[0][4]
-        assert df.iloc[0][0] == 'Z'
+    def test_out_of_limits(self, fitted_chart, values_labels, expected_out_of_control):
+        fitted_chart.predict(values_labels['values'], values_labels['labels'])
+        assert_frame_equal(fitted_chart.out_of_control.reset_index(drop=True), expected_out_of_control)

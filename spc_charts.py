@@ -1,10 +1,10 @@
+import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import json
 
 
 def is_array(values):
@@ -51,7 +51,7 @@ class MRChart:
                  r_lower_limit, r_upper_limit, r_center, title, x_title, r_title, width, height):
         self._x_values = x_values
         self._labels = labels
-        self._y = np.arange(1, self._x_values.shape[0]+1, 1)
+        self._y = np.arange(1, self._x_values.shape[0] + 1, 1)
         self._x_center = x_center
         self._x_status = x_status
         self._r_status = r_status
@@ -165,7 +165,8 @@ class MRChart:
 
 class XbarR:
     """For the production of Average and Range Shewart charts from subgroups of data."""
-    def __init__(self, title='', r_title='Range', x_title='Average',chart_width=800, chart_height=600):
+
+    def __init__(self, title='', r_title='Range', x_title='Average', chart_width=800, chart_height=600):
         self._title = title
         self._x_title = x_title
         self._r_title = r_title
@@ -220,20 +221,6 @@ class XbarR:
         self._r_lower_limit = mean_range * D3
         self._fitted = True
 
-    def set_model(self, n, x_upper_limit, x_lower_limit, x_center_line, r_upper_limit, r_lower_limit, r_center_line, title, x_title, r_title):
-        """ Sets the parameters for the chart"""
-        self._n = n
-        self._x_upper_limit = x_upper_limit
-        self._x_lower_limit = x_lower_limit
-        self._x_center_line = x_center_line
-        self._r_upper_limit = r_upper_limit
-        self._r_lower_limit = r_lower_limit
-        self._r_center_line = r_center_line
-        self._title = title
-        self._x_title = x_title
-        self._r_title = r_title
-        self._fitted = True
-
     def predict(self, values, labels):
         """
         Transform subgroup data into average and moving range values for plotting
@@ -245,7 +232,8 @@ class XbarR:
         is_array(labels)
         array_missing_values(values)
         if not values.shape[1] == self._n:
-            raise ValueError(f'Error: the number of subgroups must be the same as that used to calculate the control limits ({self._n})')
+            raise ValueError(
+                f'Error: the number of subgroups must be the same as that used to calculate the control limits ({self._n})')
         subgroups, n = values.shape
         if n < 2:
             raise Exception('Error: the number of samples per subgroup must be greater than one.')
@@ -300,7 +288,7 @@ class XbarR:
         return (values > lower_limit) & (values < upper_limit)
 
     def save(self, path):
-        if not self._chart:
+        if not self._fitted:
             raise Exception('Error: the chart must be fitted before it can be saved')
         params = {
             'n': self._n,
@@ -310,25 +298,27 @@ class XbarR:
             'r_upper_limit': self._r_upper_limit,
             'r_lower_limit': self._r_lower_limit,
             'r_center_line': self._r_center_line,
-            'title':self._title,
+            'title': self._title,
             'x_title': self._x_title,
             'r_title': self._r_title
         }
         with open(path, 'w') as fp:
             json.dump(params, fp)
 
-    @property
-    def control_limits(self):
-        """Returns the values of the control limits and means"""
-        return {
-            'X center line': self._x_center_line,
-            'X sigma': self._x_sigma,
-            'X upper control limit': self._x_upper_limit,
-            'X lower limit': self._x_lower_limit,
-            'R center line': self._r_center_line,
-            'R upper limit': self._r_upper_limit,
-            'R lower limit': self._r_lower_limit
-        }
+    def load(self, path):
+        with open(path, 'r') as fp:
+            params = json.load(fp)
+        self._n = params['n']
+        self._x_upper_limit = params['x_upper_limit']
+        self._x_lower_limit = params['x_lower_limit']
+        self._x_center_line = params['x_center_line']
+        self._r_upper_limit = params['r_upper_limit']
+        self._r_lower_limit = params['r_lower_limit']
+        self._r_center_line = params['r_center_line']
+        self._title = params['title']
+        self._x_title = params['x_title']
+        self._r_title = params['r_title']
+        self._fitted = True
 
     @property
     def out_of_control(self):
@@ -347,7 +337,6 @@ class XbarR:
     @property
     def averages_ranges(self):
         return self._subgroup_means, self._subgroup_ranges
-
 
 # class IndividualMR:
 #     """Calculates the data required to create an Average and moving range chart for individual values."""
