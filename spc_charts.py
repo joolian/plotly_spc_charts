@@ -306,10 +306,11 @@ class XbarR:
         subgroup_ranges = np.abs(np.max(values, axis=1) - np.min(values, axis=1))
         return subgroup_means, subgroup_ranges
 
-    def fit(self, values):
+    def fit(self, values, labels):
         """
         Calculates the control limits and center lines for the mean and range charts.
         :param values: The values to be used to calculate the control limits. The subgroup size must be a least 2.
+        :params labels: numpy.array of the labels for each subgroup
         :type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
         :raises:
             TypeError: if values is not a numpy array
@@ -336,6 +337,7 @@ class XbarR:
         self._r_upper_limit = mean_range * D4
         self._r_lower_limit = mean_range * D3
         self._fitted = True
+        self.predict(values, labels)
 
     def predict(self, values, labels):
         """

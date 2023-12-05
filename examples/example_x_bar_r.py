@@ -11,7 +11,9 @@ if __name__ == '__main__':
     # Create the chart object
     chart = XbarR(title='Water cooling pressure', x_title='Subgroup mean', r_title='Subgroup range')
     # Calculate the control limits
-    chart.fit(values=values)
+    chart.fit(values=values[:12, :], labels=labels[:12])
+    # Plot the chart
+    chart.plot()
     # Calculate the ranges and means for new data
     chart.predict(values=values, labels=labels)
     # plot the chart
