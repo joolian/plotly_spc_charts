@@ -72,7 +72,7 @@ class TestXbarR:
     @pytest.fixture
     def fitted_chart(self, values_labels):
         chart = XbarR(title='Water cooling pressure', x_title='Subgroup mean', r_title='Subgroup range')
-        chart.fit(values_labels['values'])
+        chart.fit(values_labels['values'], values_labels['labels'])
         return chart
 
     def test_fit(self, fitted_chart, expected_params):
@@ -85,21 +85,21 @@ class TestXbarR:
     def test_fit_type_error(self):
         with pytest.raises(TypeError, match="Values must be a numpy array, not <class 'list'>"):
             chart = XbarR()
-            chart.fit(values=[1, 2, 3])
+            chart.fit(values=[1, 2, 3], labels=['a', 'b', 'c'])
 
     def test_fit_size_error(self):
         with pytest.raises(ValueError, match='The number of samples per subgroup must be greater than one.'):
             chart = XbarR()
-            chart.fit(values=np.array([[1], [2]]))
+            chart.fit(values=np.array([[1], [2]]), labels=['a', 'b'])
 
     def test_fit_missing_values(self):
         with pytest.raises(ValueError, match='There are missing values.'):
             chart = XbarR()
-            chart.fit(values=np.array([[None, 2, 3], [1, 2, np.nan]]))
+            chart.fit(values=np.array([[None, 2, 3], [1, 2, np.nan]]), labels=['a', 'b', 'c'])
 
     def test_predict(self, values_labels, expected_means_ranges):
         chart = XbarR()
-        chart.fit(values_labels['values'])
+        chart.fit(values_labels['values'], values_labels['labels'])
         chart.predict(values_labels['values'], values_labels['labels'])
         subgroup_means, subgroup_ranges = chart.averages_ranges
         assert_array_equal(subgroup_means, expected_means_ranges['means'])
