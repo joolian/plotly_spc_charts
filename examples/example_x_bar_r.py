@@ -1,4 +1,4 @@
-""" Example of creating Average and range chart for subgroups"""
+""" Example of creating Average and Range chart for subgroups"""
 import pandas as pd
 from spc_charts import XbarR
 import json
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # plot the chart
     chart.plot()
     # Save the chart as an SVG file
-    chart.save_chart('Water_chart.pdf')
+    chart.save_chart('Water_chart.svg')
     # Get the values that are outside the control limits
     print(chart.out_of_control)
     # Get the means and ranges of the data plotted on the chart

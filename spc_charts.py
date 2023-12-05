@@ -1,3 +1,5 @@
+"""Plotly charts for Statistical Process control"""
+
 import json
 from pathlib import Path
 
@@ -8,24 +10,42 @@ from plotly.subplots import make_subplots
 
 
 def is_array(values):
+    """
+    Raises a TypeError if values is not a numpy array
+    """
     if not isinstance(values, np.ndarray):
         raise TypeError(f'Values must be a numpy array, not {type(values)}')
 
 
 def array_missing_values(values):
+    """
+    Raises a ValueError if there are missing values in values.
+    """
     if np.any(pd.isna(values)):
         raise ValueError('There are missing values.')
 
 
 class Constants:
-    """Represents a table of constants"""
+    """
+    Represents a table of constants
+
+    Methods:
+        constant()
+    """
 
     def __init__(self, path):
+        """
+        :param path: The path and filename of the constants CSV file.
+        """
         self._path = path
         self._factors = None
         self._load()
 
     def _load(self):
+        """
+        loads the constants csv file
+        :raises: Exception: if the constants file is not found.
+        """
         try:
             self._factors = pd.read_csv(self._path, index_col=0)
         except FileNotFoundError as e:
@@ -37,18 +57,43 @@ class Constants:
         :param n: the value of n
         :param name: the name of the constant
         :return: the value of the constant
+        :raises: Exception: if the constant is not found
         """
         try:
             return self._factors.loc[n][name]
-        except KeyError as error:
+        except KeyError as e:
             raise Exception(f'Cannot find {name} for n={n}')
 
 
-class MRChart:
-    """Plotly chart for X and R"""
+class XRChart:
+    """
+    Plotly chart for X and R
+
+    Methods:
+        draw()
+        save()
+    """
 
     def __init__(self, x_values, labels, x_center, x_status, x_upper_limit, x_lower_limit, r_values, r_status,
                  r_lower_limit, r_upper_limit, r_center, title, x_title, r_title, width, height):
+        """
+        :param x_values: the values to be plotted on the X chart
+        :param labels: the labels for the values plotted on the X and R charts
+        :param x_center: The center line of the X chart
+        :param x_status: Boolean array: whether the values in x_values are in control.
+        :param x_upper_limit: the upper limit for the X chart
+        :param x_lower_limit: the lower limit for the X chart
+        :param r_values: the values to be plotted on the R chart
+        :param r_status: Boolean array: whether the values in x_values are in control.
+        :param r_lower_limit: the lower limit of the R chart
+        :param r_upper_limit: the upper limit of the R chart
+        :param r_center: the center line of the R chart
+        :param title: the title for the chart
+        :param x_title: the title of the y-axis of the X chart
+        :param r_title: the title of the y-axis of the R chart
+        :param width: the width of the chart in pixels
+        :param height: the height of the chart in pixels
+        """
         self._x_values = x_values
         self._labels = labels
         self._y = np.arange(1, self._x_values.shape[0] + 1, 1)
@@ -68,13 +113,19 @@ class MRChart:
         self._height = height
 
         self._fig = make_subplots(rows=2, cols=1, shared_xaxes=True)
-        self._draw()
+        self.draw()
 
     @staticmethod
     def _marker_colors(status):
+        """ Sets the color of the markers based on whether they are in or out of control"""
         return np.where(status, 'green', 'red')
 
     def _control_limit_trace(self, limit, name):
+        """
+        Creates a trace for control limits
+        :param limit: the control limit
+        :param name: the name to give the trace
+        """
         control_limit_x = [min(self._y), max(self._y)]
         control_limit_y = [limit] * 2
         return go.Scatter(
@@ -91,6 +142,10 @@ class MRChart:
         )
 
     def _mean_trace(self, value):
+        """
+        Creates a trace for center lines
+        :param value: the value of the center line
+        """
         control_limit_x = [min(self._y), max(self._y)]
         control_limit_y = [value] * 2
         return go.Scatter(
@@ -103,6 +158,12 @@ class MRChart:
         )
 
     def _value_trace(self, values, status, marker_labels):
+        """
+        Creates a trace to plot the values
+        :param values: the values to plot
+        :param status: whether the vales are in or out of control
+        :param marker_labels: the labels for the values
+        """
         return go.Scatter(
             x=self._y,
             y=values,
@@ -116,10 +177,14 @@ class MRChart:
             ),
             customdata=marker_labels,
             hovertemplate='<b>%{customdata[0]}</b><br>%{customdata[1]}',
-
         )
 
     def _marker_labels(self, axis_title, values):
+        """
+        Creates the hover text for each marker
+        :param axis_title: the title of the y-axis
+        :param values: the values for each marker
+        """
         return list(
             zip(
                 self._labels,
@@ -127,7 +192,8 @@ class MRChart:
             )
         )
 
-    def _draw(self):
+    def draw(self):
+        """Creates a plotly chart"""
         self._fig.add_trace(
             self._value_trace(
                 values=self._x_values,
@@ -160,47 +226,97 @@ class MRChart:
         self._fig.show()
 
     def save(self, path):
+        """Saves the chart as an image file"""
         self._fig.write_image(path)
 
 
 class XbarR:
-    """For the production of Average and Range Shewart charts from subgroups of data."""
+    """
+    Shewart Average and Range chart
+
+    Methods:
+        fit()
+        predict()
+        plot()
+        save()
+        load()
+        save_chart()
+
+    Properties:
+        out_of_control
+        averages_ranges
+    """
 
     def __init__(self, title='', r_title='Range', x_title='Average', chart_width=800, chart_height=600):
+        """
+        :param title: The chart title
+        :param r_title: The title for the y-axis of the range chart
+        :param x_title: The title for the y-axis of the mean chart
+        :param chart_width: The chart width in pixels, defaults to 800.
+        :param chart_height: The chart height in pixels, defaults to 600.
+        """
         self._title = title
         self._x_title = x_title
         self._r_title = r_title
         self._chart_width = chart_width
         self._chart_height = chart_height
-        self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
 
-        self._n = None  # Number of values in each subgroup
+        self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
+        """Instance variable for the constants object"""
+        self._n = None
+        """Number of values in each subgroup"""
         self._x_center_line = None
+        """The values of the center line for the subgroup averages chart"""
         self._x_sigma = None
+        """The value of sigma for the subgroup averages chart"""
         self._x_upper_limit = None
+        """The upper limit for the subgroup averages chart"""
         self._x_lower_limit = None
+        """The lower limit for the subgroup averages chart"""
         self._r_center_line = None
+        """The center line for the subgroup range chart"""
         self._r_upper_limit = None
+        """The upper limit for the subgroup range chart"""
         self._r_lower_limit = None
+        """The lower limit for the subgroup range chart"""
         self._fitted = False
+        """True the model has been fitted, False if it has not."""
         self._subgroup_ranges = None
+        """The range of each subgroup of the values to be plotted"""
         self._subgroup_means = None
-        self._labels = None  # TODO this is unsatisfactory
+        """The means of each subgroup calculated by the predict method"""
+        self._labels = None
+        """The labels given to the subgroups by the user"""
         self._r_in_limits = None
+        """Whether each subgroup range is within the range chart control limits"""
         self._x_in_limits = None
+        """Whether each subgroup mean is within the mean chart control limits"""
         self._chart = None
+        """True is the chart has been plotted"""
 
     @staticmethod
-    def subgroup_range_mean(values):
+    def _subgroup_range_mean(values):
+        """
+        Calculates the subgroup ranges and subgroup means
+        :param values: numpy.Array each row is a subgroup and each column is a value of the subgroup.
+        :return: The subgroup means and the subgroup ranges.
+        """
         """Calculates the mean and the range of each subgroup of measurements"""
         subgroup_means = np.mean(values, axis=1)
         subgroup_ranges = np.abs(np.max(values, axis=1) - np.min(values, axis=1))
         return subgroup_means, subgroup_ranges
 
     def fit(self, values):
-        """Calculates the control limits for average and range charts"""
-        # if not isinstance(values, np.ndarray):
-        #     raise Exception(f'Error: values must be a numpy array, not {type(values)}')
+        """
+        Calculates the control limits and center lines for the mean and range charts.
+        :param values: The values to be used to calculate the control limits. The subgroup size must be a least 2.
+        :type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
+        :raises:
+            TypeError: if values is not a numpy array
+            ValueError: if there are missing values in values.
+            ValueError: if there are less than 2 columns in values.
+
+        """
         is_array(values)
         array_missing_values(values)
         subgroups, n = values.shape
@@ -210,7 +326,7 @@ class XbarR:
         A2 = self._constants.constant(n=self._n, name='A2')
         D3 = self._constants.constant(n=self._n, name='D3')
         D4 = self._constants.constant(n=self._n, name='D4')
-        subgroup_means, subgroup_ranges = self.subgroup_range_mean(values)
+        subgroup_means, subgroup_ranges = self._subgroup_range_mean(values)
         mean_range = np.mean(subgroup_ranges)
         self._x_center_line = np.mean(values)
         self._x_sigma = A2 * mean_range
@@ -223,8 +339,17 @@ class XbarR:
 
     def predict(self, values, labels):
         """
-        Transform subgroup data into average and moving range values for plotting
-        on a chart. Labels which data is out of control.
+        Transform subgroup values into mean and moving range values for plotting
+        on a chart. Calculates whether the means and ranges are outside their respective limits.
+        :params values: numpy.Array each row is a subgroup and each column is a value of the subgroup.
+        :params labels: numpy.array of the labels for each subgroup
+        :raises:
+            Exception: if the control limits have not been calculated.
+            TypeError: if values or labels is not a numpy array
+            ValueError: if there are missing values in values.
+            ValueError: if the number of values in the subgroups used to calculate the control limits is different
+                        to the number of subgroups in values.
+
         """
         if not self._fitted:
             raise Exception('Error: chart has not been fitted')
@@ -234,19 +359,16 @@ class XbarR:
         if not values.shape[1] == self._n:
             raise ValueError(
                 f'Error: the number of subgroups must be the same as that used to calculate the control limits ({self._n})')
-        subgroups, n = values.shape
-        if n < 2:
-            raise Exception('Error: the number of samples per subgroup must be greater than one.')
         self._labels = labels
-        self._subgroup_means, self._subgroup_ranges = self.subgroup_range_mean(values)
-        self._r_in_limits = self.within_limits(self._subgroup_ranges, self._r_upper_limit, self._r_lower_limit)
-        self._x_in_limits = self.within_limits(self._subgroup_means, self._x_upper_limit, self._x_lower_limit)
+        self._subgroup_means, self._subgroup_ranges = self._subgroup_range_mean(values)
+        self._r_in_limits = self._in_control(self._subgroup_ranges, self._r_upper_limit, self._r_lower_limit)
+        self._x_in_limits = self._in_control(self._subgroup_means, self._x_upper_limit, self._x_lower_limit)
 
     def plot(self):
         """
-        Plots the average and range values on a chart
+        Plots the mean and range values on Plotly chart
         """
-        self._chart = MRChart(
+        self._chart = XRChart(
             x_values=self._subgroup_means,
             labels=self._labels,
             x_center=self._x_center_line,
@@ -269,15 +391,22 @@ class XbarR:
     def _update_chart(self):
         pass
 
+    # TODO SAME
     def save_chart(self, path):
-        """Saves an image of the chart to a file"""
+        """
+        Saves an image of the chart to a file.
+        :params path: The full path and filename to save to. The file type is
+            automatically determined by the filename extension. Allowed files
+            types are PNG, JPEG, WebP, SVG and PDF.
+        """
         if self._chart:
             self._chart.save(path)
         else:
             raise Exception('Error: the chart must be plotted before it can be saved')
 
+    # TODO SAME
     @staticmethod
-    def within_limits(values, upper_limit, lower_limit):
+    def _in_control(values, upper_limit, lower_limit):
         """
         Is each value within the control limits?
         :param values: array of values
@@ -287,7 +416,12 @@ class XbarR:
         """
         return (values > lower_limit) & (values < upper_limit)
 
+    # TODO SAME
     def save(self, path):
+        """
+        Saves the chart parameters to a json file.
+        :param path: The full path and filename.
+        """
         if not self._fitted:
             raise Exception('Error: the chart must be fitted before it can be saved')
         params = {
@@ -305,7 +439,12 @@ class XbarR:
         with open(path, 'w') as fp:
             json.dump(params, fp)
 
+    # TODO SAME
     def load(self, path):
+        """
+        Loads the chart parameters from a JSON file.
+        :param path: The full path and filename of the file to load
+        """
         with open(path, 'r') as fp:
             params = json.load(fp)
         self._n = params['n']
@@ -320,9 +459,10 @@ class XbarR:
         self._r_title = params['r_title']
         self._fitted = True
 
+    # TODO SAME
     @property
     def out_of_control(self):
-        """Returns a DataFrame listing the values that are out of control"""
+        """pandas.DataFrame listing the subgroups where the ranges or means are out of control"""
         df = pd.DataFrame(
             data={
                 'labels': self._labels,
@@ -336,10 +476,13 @@ class XbarR:
 
     @property
     def averages_ranges(self):
+        """
+        The predicted subgroup means and ranges.
+        """
         return self._subgroup_means, self._subgroup_ranges
 
 # class IndividualMR:
-#     """Calculates the data required to create an Average and moving range chart for individual values."""
+#     """Calculates the data required to create an mean and moving range chart for individual values."""
 #     # Constants for subgroups of size n=2
 #     d2 = 1.128
 #     d4 = 3.268
