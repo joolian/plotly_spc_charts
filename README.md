@@ -7,7 +7,7 @@ Creates an interactive Average and Range chart using Plotly.
 The control limits can be calculated using one set of data and the chart plotted.  
 New data can be plotted using the calculated control limits.  
 The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
-The control limits can be saved to JSON for reuse.  
+The control limits can be saved to JSON, and  loaded into another chart.  
 Out of control subgroups are shown with red markers.
 Subgroups are classed as out of control if they are greater or less than the control limits.  
 Each subgroup can be labelled and the labels will be shown on the chart.  
@@ -43,4 +43,5 @@ Constants for the computing of control limits are listed in [factor_values_for_s
 Values where extracted from: 
 <em>[A Note on the Factor Values of Three Common Shewhart Variables Control Charts. Henry H. Bi. 2015. Communications in Statistics - Theory and Methods (0361-0926). 44(13): 2655-2673. DOI:10.1080/03610926.2014.968732](https://www.researchgate.net/publication/275236350_A_Note_on_the_Factor_Values_of_Three_Common_Shewhart_Variables_Control_Charts_Henry_H_Bi_2015_Communications_in_Statistics_-_Theory_and_Methods_0361-0926_4413_2655-2673_httpdxdoiorg1010800361092620149)</em>
 
-
+## TODO
+Allow the use of Western Electric rules.
