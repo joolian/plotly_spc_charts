@@ -9,14 +9,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def is_array(values):
-    """
-    Raises a TypeError if values is not a numpy array
-    """
-    if not isinstance(values, np.ndarray):
-        raise TypeError(f'Values must be a numpy array, not {type(values)}')
-
-
 def array_missing_values(values):
     """
     Raises a ValueError if there are missing values in values.
@@ -310,7 +302,9 @@ class XbarR:
         """
         Calculates the control limits and center lines for the mean and range charts.
         :param values: The values to be used to calculate the control limits. The subgroup size must be a least 2.
-        :params labels: numpy.array of the labels for each subgroup
+        :type values: list, tuple or array
+        :params labels: The labels for each subgroup
+        :type labels: list, tuple or array of strings
         :type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
         :raises:
             TypeError: if values is not a numpy array
@@ -318,7 +312,8 @@ class XbarR:
             ValueError: if there are less than 2 columns in values.
 
         """
-        is_array(values)
+        values = np.array(values)
+        labels = np.array(labels)
         array_missing_values(values)
         subgroups, n = values.shape
         if n < 2:
@@ -343,11 +338,12 @@ class XbarR:
         """
         Transform subgroup values into mean and moving range values for plotting
         on a chart. Calculates whether the means and ranges are outside their respective limits.
-        :params values: numpy.Array each row is a subgroup and each column is a value of the subgroup.
-        :params labels: numpy.array of the labels for each subgroup
+        :params values: Each row is a subgroup and each column is a value of the subgroup.
+        :type values: list, tuple or array
+        :params labels: The labels for each subgroup
+        :type labels: list, tuple or array of strings
         :raises:
             Exception: if the control limits have not been calculated.
-            TypeError: if values or labels is not a numpy array
             ValueError: if there are missing values in values.
             ValueError: if the number of values in the subgroups used to calculate the control limits is different
                         to the number of subgroups in values.
@@ -355,13 +351,12 @@ class XbarR:
         """
         if not self._fitted:
             raise Exception('Error: chart has not been fitted')
-        is_array(values)
-        is_array(labels)
+        values = np.array(values)
         array_missing_values(values)
         if not values.shape[1] == self._n:
             raise ValueError(
                 f'Error: the number of subgroups must be the same as that used to calculate the control limits ({self._n})')
-        self._labels = labels
+        self._labels = np.array(labels)
         self._subgroup_means, self._subgroup_ranges = self._subgroup_range_mean(values)
         self._r_in_limits = self._in_control(self._subgroup_ranges, self._r_upper_limit, self._r_lower_limit)
         self._x_in_limits = self._in_control(self._subgroup_means, self._x_upper_limit, self._x_lower_limit)

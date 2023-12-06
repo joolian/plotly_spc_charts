@@ -79,13 +79,7 @@ class TestXbarR:
         fitted_chart.save('model_params.json')
         with open('model_params.json', 'r') as fp:
             chart_params = json.load(fp)
-
         assert chart_params == expected_params
-
-    def test_fit_type_error(self):
-        with pytest.raises(TypeError, match="Values must be a numpy array, not <class 'list'>"):
-            chart = XbarR()
-            chart.fit(values=[1, 2, 3], labels=['a', 'b', 'c'])
 
     def test_fit_size_error(self):
         with pytest.raises(ValueError, match='The number of samples per subgroup must be greater than one.'):
@@ -104,17 +98,6 @@ class TestXbarR:
         subgroup_means, subgroup_ranges = chart.averages_ranges
         assert_array_equal(subgroup_means, expected_means_ranges['means'])
         assert_array_equal(subgroup_ranges, expected_means_ranges['ranges'])
-
-    @pytest.mark.parametrize(
-        'p_values, p_labels',
-        [
-            (np.array([1, 2, 3]), ['A', 'B', 'C']),
-            ([1, 2, 3], np.array(['A', 'B', 'C']))
-        ]
-    )
-    def test_predict_type_error(self, fitted_chart, p_values, p_labels):
-        with pytest.raises(TypeError, match="Values must be a numpy array, not <class 'list'>"):
-            fitted_chart.predict(p_values, p_labels)
 
     def test_predict_missing_values(self, fitted_chart):
         with pytest.raises(ValueError, match='There are missing values.'):
