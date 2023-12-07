@@ -7,7 +7,7 @@ import pytest
 from numpy.testing import assert_array_equal
 from pandas.testing import assert_frame_equal
 
-from spc_charts import Constants, XbarR
+from spc_charts import Constants, XbarR, IndividualMR
 
 
 class TestConstants:
@@ -95,7 +95,7 @@ class TestXbarR:
         chart = XbarR()
         chart.fit(values_labels['values'], values_labels['labels'])
         chart.predict(values_labels['values'], values_labels['labels'])
-        subgroup_means, subgroup_ranges = chart.averages_ranges
+        subgroup_means, subgroup_ranges = chart.x_r_values
         assert_array_equal(subgroup_means, expected_means_ranges['means'])
         assert_array_equal(subgroup_ranges, expected_means_ranges['ranges'])
 
@@ -115,3 +115,7 @@ class TestXbarR:
     def test_out_of_limits(self, fitted_chart, values_labels, expected_out_of_control):
         fitted_chart.predict(values_labels['values'], values_labels['labels'])
         assert_frame_equal(fitted_chart.out_of_control.reset_index(drop=True), expected_out_of_control)
+
+
+class TestIndividualMR:
+    pass

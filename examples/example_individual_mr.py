@@ -1,17 +1,15 @@
-""" Example of creating Average and Range chart for subgroups"""
+""" Example of creating and Individual Moving Range chart"""
 import pandas as pd
-
-from spc_charts import XbarR
+from spc_charts import IndividualMR
+import string
 
 if __name__ == '__main__':
     # Get some data
-    data = pd.read_csv('spc_example_data_cooling_water.csv')
-    labels = data['Date'].to_numpy()
-    values = data[[col for col in data.columns.values if 'Pressure' in col]].to_numpy()
-    # Create the chart object
-    chart = XbarR(title='Water cooling pressure', x_title='Subgroup mean', r_title='Subgroup range')
+    values = [39, 41, 41, 41, 43, 44, 41, 42, 40, 41, 44, 40, 41, 43, 47]
+    labels = list(string.ascii_uppercase)[: len(values)]
+    chart = IndividualMR(title='Individuals chart', x_title='Values', r_title='Moving range')
     # Calculate the control limits
-    chart.fit(values=values[:12, :], labels=labels[:12])
+    chart.fit(values=values, labels=labels)
     # Plot the chart
     chart.plot()
     # Calculate the ranges and means for new data
@@ -19,7 +17,7 @@ if __name__ == '__main__':
     # plot the chart
     chart.plot()
     # Save the chart as an SVG file
-    chart.save_chart('Water_chart.svg')
+    chart.save_chart('individual.svg')
     # Get the values that are outside the control limits
     print(chart.out_of_control)
     # Get the means and ranges of the data plotted on the chart
@@ -29,7 +27,7 @@ if __name__ == '__main__':
     # Save to a json file, the parameters required for a chart such as control limits.
     chart.save('model_params.json')
     # create a new chart object and load the model parameters from a json  file
-    another_chart = XbarR()
+    another_chart = IndividualMR()
     another_chart.load('model_params.json')
     another_chart.predict(values=values, labels=labels)
     another_chart.plot()
