@@ -482,7 +482,7 @@ class XbarR:
 
 class IndividualMR(XbarR):
     """
-    Shewart Average and Range chart
+    Shewart Individual and Moving Range chart
 
     Methods:
         fit()
