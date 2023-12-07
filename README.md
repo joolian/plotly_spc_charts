@@ -24,6 +24,8 @@ Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992
 $UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
   
 $LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
+
+$CL_{bar{X}} = \bar{\bar{X}}
   
 $UCL_{R} = D_{4}\bar{R}$  
   
@@ -48,7 +50,14 @@ Values where extracted from:
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 45-46.</em>  
 
-$UNPL_{X} = \bar{\bar{X}} + \large \frac{3\bar{R}}{d_{2}}$
+$UNPL_{X} = \bar{\bar{X}} + \Large \frac{3\bar{R}}{d_{2}}$
+
+$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{R}}{d_{2}}$
+
+$CL_{X} = \bar{X}$
+
+$UCL_{R} = D_{4} \bar{mR}$
+
 
 ## TODO
 Allow the use of Western Electric rules.
