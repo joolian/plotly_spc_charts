@@ -48,7 +48,7 @@ Values where extracted from:
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 45-46.</em>  
 
-$UNPL_{X} = \bar{\bar{X}} + \frac{3\bar{R}}{d_{2}}$
+$UNPL_{X} = \bar{\bar{X}} + \large \frac{3\bar{R}}{d_{2}}$
 
 ## TODO
 Allow the use of Western Electric rules.
