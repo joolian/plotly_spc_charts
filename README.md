@@ -47,6 +47,8 @@ Values where extracted from:
 
 
 ## Shewart Individual and Moving Range Chart
+
+
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 45-46.</em>  
 
@@ -56,8 +58,9 @@ $LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{R}}{d_{2}}$
 
 $CL_{X} = \bar{X}$
 
-$UCL_{R} = D_{4} \bar{mR}$
+$UCL_{R} = D_{4}\bar{m}\bar{R}$
 
 
 ## TODO
-Allow the use of Western Electric rules.
+Allow the use of Western Electric rules.  
+See: [ Western Electric Company, Statistical Quality Control Handbook., Indianapolis, Indiana: Western Electric Co](https://www.westernelectric.com/library#technical)
