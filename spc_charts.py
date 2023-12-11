@@ -242,6 +242,7 @@ class XbarR:
     """
 
     has_r_lower_limit = True
+    chart_type = 'XBarR'
 
     def __init__(self, title='', r_title='Range', x_title='Average', chart_width=800, chart_height=600):
         """
@@ -417,14 +418,10 @@ class XbarR:
         """
         return (values >= lower_limit) & (values <= upper_limit)
 
-    def save(self, path):
-        """
-        Saves the chart parameters to a json file.
-        :param path: The full path and filename.
-        """
-        if not self._fitted:
-            raise Exception('Error: the chart must be fitted before it can be saved')
-        params = {
+    def _params_to_dict(self):
+        """Converts the chart parameters to a dictionary"""
+        return {
+            'type': type(self).chart_type,
             'n': self._n,
             'x_upper_limit': self._x_upper_limit,
             'x_lower_limit': self._x_lower_limit,
@@ -436,16 +433,12 @@ class XbarR:
             'x_title': self._x_title,
             'r_title': self._r_title
         }
-        with open(path, 'w') as fp:
-            json.dump(params, fp)
 
-    def load(self, path):
+    def _dict_to_params(self, params):
         """
-        Loads the chart parameters from a JSON file.
-        :param path: The full path and filename of the file to load
+        Sets the values of the chart parameters from a dictionary.
+        :param params: The values of the chart parameters as a dictionary
         """
-        with open(path, 'r') as fp:
-            params = json.load(fp)
         self._n = params['n']
         self._x_upper_limit = params['x_upper_limit']
         self._x_lower_limit = params['x_lower_limit']
@@ -456,6 +449,42 @@ class XbarR:
         self._title = params['title']
         self._x_title = params['x_title']
         self._r_title = params['r_title']
+
+    def save(self, path):
+        """
+        Saves the chart parameters to a json file.
+        :param path: The full path and filename.
+        """
+        if not self._fitted:
+            raise Exception('Error: the chart must be fitted before it can be saved')
+        params = self._params_to_dict()
+        with open(path, 'w') as fp:
+            json.dump(params, fp)
+
+    def load(self, path):
+        """
+        Loads the chart parameters from a JSON file.
+        :param path: The full path and filename of the file to load
+        """
+        with open(path, 'r') as fp:
+            params = json.load(fp)
+        self._dict_to_params(params)
+        self._fitted = True
+
+    @property
+    def params(self):
+        """Returns the chart parameters"""
+        return self._params_to_dict()
+
+    @params.setter
+    def params(self, params):
+        """
+        Sets the chart parameters
+        :param params: The chart parameters
+        :type params: dictionary
+        :return:
+        """
+        self._dict_to_params(params)
         self._fitted = True
 
     @property
@@ -498,6 +527,7 @@ class IndividualMR(XbarR):
     """
 
     has_r_lower_limit = False
+    chart_type = 'IndividualMR'
 
     def fit(self, values, labels):
         """

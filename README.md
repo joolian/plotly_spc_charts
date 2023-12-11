@@ -9,8 +9,8 @@ New data can be plotted using the calculated control limits.
 The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
 The control limits can be saved to JSON, and  loaded into another chart.  
 Out of control subgroups are shown with red markers.
-Subgroups are classed as out of control if they are greater or less than the control limits.  
-Each subgroup can be labelled and the labels will be shown on the chart.  
+Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
+Each subgroup can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
 The subgroups for each chart that are out of control can be returned as a pandas Dataframe.
 
 For an example of usage see: [/examples/example_x_bar_r.py](/examples/example_x_bar_r.py)

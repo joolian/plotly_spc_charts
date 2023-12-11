@@ -33,3 +33,4 @@ if __name__ == '__main__':
     another_chart.load('model_params.json')
     another_chart.predict(values=values, labels=labels)
     another_chart.plot()
+    print(another_chart.params)

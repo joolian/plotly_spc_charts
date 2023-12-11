@@ -35,8 +35,13 @@ class TestConstants:
 class TestXbarR:
 
     @pytest.fixture
-    def test_data(self):
-        return pd.read_csv('XbarR_test_data.csv')
+    def test_data_path(self):
+        path = Path(Path(__file__).parent / 'XbarR_test_data')
+        return path
+
+    @pytest.fixture
+    def test_data(self, test_data_path):
+        return pd.read_csv(test_data_path / 'XbarR_test_data.csv')
 
     @pytest.fixture
     def values_labels(self, test_data):
@@ -47,6 +52,7 @@ class TestXbarR:
     @pytest.fixture
     def expected_params(self):
         return {
+            'type': 'XBarR',
             "n": 5,
             "x_upper_limit": 62.6012796460125,
             "x_lower_limit": 51.882053687320834,
@@ -60,8 +66,8 @@ class TestXbarR:
         }
 
     @pytest.fixture
-    def expected_out_of_control(self):
-        return pd.read_csv('XbarR_expected_out_of_control.csv', )
+    def expected_out_of_control(self, test_data_path):
+        return pd.read_csv(test_data_path / 'XbarR_expected_out_of_control.csv', )
 
     @pytest.fixture
     def expected_means_ranges(self, test_data):
@@ -76,10 +82,7 @@ class TestXbarR:
         return chart
 
     def test_fit(self, fitted_chart, expected_params):
-        fitted_chart.save('model_params.json')
-        with open('model_params.json', 'r') as fp:
-            chart_params = json.load(fp)
-        assert chart_params == expected_params
+        assert fitted_chart.params == expected_params
 
     def test_fit_size_error(self):
         with pytest.raises(ValueError, match='The number of samples per subgroup must be greater than one.'):
@@ -115,6 +118,24 @@ class TestXbarR:
     def test_out_of_limits(self, fitted_chart, values_labels, expected_out_of_control):
         fitted_chart.predict(values_labels['values'], values_labels['labels'])
         assert_frame_equal(fitted_chart.out_of_control.reset_index(drop=True), expected_out_of_control)
+
+    def test_save(self, fitted_chart, tmp_path, expected_params):
+        # print(f'Temp path: {tmp_path.parent}')
+        file_name = 'model_params.json'
+        fitted_chart.save(tmp_path / file_name)
+        with open(tmp_path / file_name, 'r') as fp:
+            assert json.load(fp) == expected_params
+
+    def test_load(self, fitted_chart, test_data_path, expected_params):
+        fitted_chart.load(test_data_path / 'XbarR_model_params.json')
+        assert fitted_chart.params == expected_params
+
+    def test_get_params(self, fitted_chart, expected_params):
+        assert fitted_chart.params == expected_params
+
+    def test_set_params(self, fitted_chart, expected_params):
+        fitted_chart.params = expected_params
+        assert fitted_chart.params == expected_params
 
 
 class TestIndividualMR:
