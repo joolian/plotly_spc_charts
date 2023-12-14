@@ -1,5 +1,12 @@
 """Plotly charts for Statistical Process control"""
 
+"""
+TODO:
+look into returning a chart class as a property so that users can manipulate it directly
+look into allowing a chart object to be passed to the control object so that users can create their own chart objects
+look into returning the chart object as a figure widget for use in a notebook
+"""
+
 import json
 from pathlib import Path
 
@@ -55,6 +62,87 @@ class Constants:
             return self._factors.loc[n][name]
         except KeyError as e:
             raise Exception(f'Cannot find {name} for n={n}')
+
+
+class RunChart:
+    """
+    Plotly run chart
+    """
+
+    def __init__(self, x_values, labels, x_center, title, x_title, width, height):
+        self._x_values = np.array(x_values)
+        self._labels = np.array(labels)
+        self._y = np.arange(1, self._x_values.shape[0] + 1, 1)
+        self._x_center = x_center
+        self._title = title
+        self._x_title = x_title
+        self._width = width
+        self._height = height
+        self._fig = None
+        self._draw()
+
+    def _marker_labels(self, axis_title, values):
+        """
+        Creates the hover text for each marker
+        :param axis_title: the title of the y-axis
+        :param values: the values for each marker
+        """
+        return list(
+            zip(
+                self._labels,
+                [f'{axis_title}: ' + str(value) for value in values]
+            )
+        )
+
+    def _draw(self):
+        center_line_x = [min(self._y), max(self._y)]
+        center_line_y = [self._x_center] * 2
+        self._fig = go.Figure()
+        self._fig.add_trace(
+            go.Scatter(
+                x=self._y,
+                y=self._x_values,
+                name='',
+                mode='markers+lines',
+                line=dict(color='gray'),
+                marker=dict(
+                    size=10,
+                    opacity=0.7,
+                    color='green'
+                ),
+                customdata=self._marker_labels(self._x_title, self._x_values),
+                hovertemplate='<b>%{customdata[0]}</b><br>%{customdata[1]}',
+            )
+        )
+        self._fig.add_trace(
+            go.Scatter(
+                x=center_line_x,
+                y=center_line_y,
+                mode='lines',
+                customdata=[f'Median: {self._x_center}'] * 2,
+                hovertemplate='<b>%{customdata}',
+                line=dict(
+                    color='black',
+                    dash='dash',
+                    width=1
+                ),
+                name=''
+            )
+        )
+        self._fig.update_layout(
+            title=self._title,
+            template='simple_white',
+            showlegend=False,
+            width=self._width,
+            height=self._height
+        )
+        self._fig.update_xaxes(showgrid=False)
+        self._fig.update_yaxes(title_text=self._x_title, showgrid=False)
+        self._fig.show()
+
+    def save(self, path):
+        """Saves the chart as an image file"""
+        self._fig.write_image(path)
 
 
 class XRChart:
@@ -113,19 +201,19 @@ class XRChart:
         """ Sets the color of the markers based on whether they are in or out of control"""
         return np.where(status, 'green', 'red')
 
-    def _control_limit_trace(self, limit, name):
+    def _control_limit_trace(self, limit):
         """
         Creates a trace for control limits
         :param limit: the control limit
-        :param name: the name to give the trace
         """
         control_limit_x = [min(self._y), max(self._y)]
         control_limit_y = [limit] * 2
         return go.Scatter(
             x=control_limit_x,
             y=control_limit_y,
-            hoverinfo='skip',
-            name=name,
+            customdata=[limit] * 2,
+            hovertemplate='<b>%{customdata}',
+            name='',
             mode='lines',
             line=dict(
                 color='black',
@@ -145,9 +233,10 @@ class XRChart:
             x=control_limit_x,
             y=control_limit_y,
             mode='lines',
-            hoverinfo='skip',
             line=dict(color='black', width=1),
-            name='Mean'
+            name='',
+            customdata=[value] * 2,
+            hovertemplate='<b>%{customdata}'
         )
 
     def _value_trace(self, values, status, marker_labels):
@@ -170,6 +259,7 @@ class XRChart:
             ),
             customdata=marker_labels,
             hovertemplate='<b>%{customdata[0]}</b><br>%{customdata[1]}',
+            showlegend=False
         )
 
     def _marker_labels(self, axis_title, values):
@@ -195,8 +285,8 @@ class XRChart:
             ),
             row=1, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._x_lower_limit, 'LCL'), row=1, col=1)
-        self._fig.add_trace(self._control_limit_trace(self._x_upper_limit, 'UCL'), row=1, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._x_lower_limit), row=1, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._x_upper_limit), row=1, col=1)
         self._fig.add_trace(self._mean_trace(self._x_center), row=1, col=1)
 
         self._fig.add_trace(
@@ -207,21 +297,70 @@ class XRChart:
             ),
             row=2, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._r_upper_limit, 'UCL'), row=2, col=1)
+        self._fig.add_trace(self._control_limit_trace(self._r_upper_limit), row=2, col=1)
         if self._show_r_lower_limit:
-            self._fig.add_trace(self._control_limit_trace(self._r_lower_limit, 'LCL'), row=2, col=1)
-        self._fig.add_trace(self._mean_trace(self._r_center), row=2, col=1)
+            self._fig.add_trace(self._control_limit_trace(self._r_lower_limit), row=2, col=1)
+        self._fig.add_trace(self._mean_trace(self._r_center, ), row=2, col=1)
 
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width,
                                 height=self._height)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
         self._fig.update_yaxes(title_text=self._x_title, showgrid=False, row=1, col=1)
         self._fig.update_yaxes(title_text=self._r_title, showgrid=False, row=2, col=1)
+
         self._fig.show()
 
     def save(self, path):
         """Saves the chart as an image file"""
         self._fig.write_image(path)
+
+
+class Run:
+    """run chart"""
+
+    def __init__(self, values, labels, title='', x_title='Average', chart_width=800, chart_height=600):
+        self._x_values = np.array(values)
+        self._labels = np.array(labels)
+        self._title = title
+        self._x_title = x_title
+        self._chart_width = chart_width
+        self._chart_height = chart_height
+        self._x_center_line = None
+        self._fitted = False
+        self._chart = None
+        self._fit()
+
+    def _fit(self):
+        if self._x_values.ndim > 1:
+            raise ValueError('Values has more than one column.')
+        self._x_center_line = np.median(self._x_values)
+        self._fitted = True
+
+    def plot(self):
+        if self._x_values is None:
+            raise ValueError('Error: there is no data to plot')
+        self._chart = RunChart(
+            x_values=self._x_values,  # same
+            labels=self._labels,
+            x_center=self._x_center_line,
+            title=self._title,
+            x_title=self._x_title,
+            width=self._chart_width,
+            height=self._chart_height
+        )
+
+    @property
+    def centre_line(self):
+        return self._x_center_line
+
+    def save_chart(self, path):
+        """
+        Saves an image of the chart to a file.
+        :params path: The full path and filename to save to. The file type is
+            automatically determined by the filename extension. Allowed files
+            types are PNG, JPEG, WebP, SVG and PDF.
+        """
+        self._chart.save(path)
 
 
 class XbarR:
@@ -308,7 +447,7 @@ class XbarR:
     def fit(self, values, labels):
         """
         Calculates the control limits and center lines for the mean and range charts.
-        :param values: The values to be used to calculate the control limits. The subgroup size must be a least 2.
+        :param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
         :type values: list, tuple or array
         :params labels: The labels for each subgroup
         :type labels: list, tuple or array of strings
@@ -316,7 +455,6 @@ class XbarR:
         :raises:
             ValueError: if there are missing values in values.
             ValueError: if there are less than 2 columns in values.
-
         """
         values = np.array(values)
         labels = np.array(labels)
@@ -325,18 +463,15 @@ class XbarR:
         if n < 2:
             raise ValueError('The number of samples per subgroup must be greater than one.')
         self._n = n
-        A2 = self._constants.constant(n=self._n, name='A2')
-        D3 = self._constants.constant(n=self._n, name='D3')
-        D4 = self._constants.constant(n=self._n, name='D4')
         subgroup_means, subgroup_ranges = self._subgroup_range_mean(values)
         mean_range = np.mean(subgroup_ranges)
         self._x_center_line = np.mean(values)
-        self._x_sigma = A2 * mean_range
+        self._x_sigma = self._constants.constant(n=self._n, name='A2') * mean_range
         self._x_upper_limit = self._x_center_line + self._x_sigma
         self._x_lower_limit = self._x_center_line - self._x_sigma
         self._r_center_line = mean_range
-        self._r_upper_limit = mean_range * D4
-        self._r_lower_limit = mean_range * D3
+        self._r_upper_limit = mean_range * self._constants.constant(n=self._n, name='D4')
+        self._r_lower_limit = mean_range * self._constants.constant(n=self._n, name='D3')
         self._fitted = True
         self.predict(values, labels)
 
@@ -369,16 +504,19 @@ class XbarR:
 
     def plot(self):
         """
-        Plots the mean and range values on Plotly chart
+        Plots the mean and range values on Plotly chart.
+        :raises: ValueError: if there is no data to plot
         """
+        if self._x_values is None:
+            raise ValueError('Error: there is no data to plot')
         self._chart = XRChart(
-            x_values=self._x_values, # same
+            x_values=self._x_values,  # same
             labels=self._labels,
             x_center=self._x_center_line,
             x_status=self._x_in_limits,
             x_upper_limit=self._x_upper_limit,
             x_lower_limit=self._x_lower_limit,
-            r_values=self._r_values, # same
+            r_values=self._r_values,  # same
             r_status=self._r_in_limits,
             r_upper_limit=self._r_upper_limit,
             r_lower_limit=self._r_lower_limit,
@@ -416,7 +554,7 @@ class XbarR:
         :param lower_limit: the lower control limit
         :return: boolean array
         """
-        return (values >= lower_limit) & (values <= upper_limit)
+        return ((values >= lower_limit) & (values <= upper_limit)) | (pd.isna(values))
 
     def _params_to_dict(self):
         """Converts the chart parameters to a dictionary"""
@@ -488,25 +626,25 @@ class XbarR:
         self._fitted = True
 
     @property
-    def out_of_control(self):
-        """pandas.DataFrame listing the subgroups where the ranges or means are out of control"""
-        df = pd.DataFrame(
+    def predicted(self):
+        """
+        A pandas DataFrame of the predicted data. Columns are:
+            'labels': the labels for each value plotted.
+            'x_values: the values plotted on the X chart.
+            'r_values: the values plotted on the R chart.
+            'x_in_control: True if the value plotted on the Averages chart is within the control limits.
+            'r_in_control: True if the value plotted on the Range chart in within the control limits.
+        :return: pandas.DataFrame
+        """
+        return pd.DataFrame(
             data={
                 'labels': self._labels,
-                'mean': self._x_values,
-                'range': self._r_values,
-                'mean_within_limits': self._x_in_limits,
-                'range_within_limits': self._r_in_limits
+                'x_values': self._x_values,
+                'r_values': self._r_values,
+                'x_in_control': self._x_in_limits,
+                'r_in_control': self._r_in_limits
             }
         )
-        return df[~df['mean_within_limits'] | ~df['range_within_limits']]
-
-    @property
-    def x_r_values(self):
-        """
-        The predicted subgroup means and ranges.
-        """
-        return self._x_values, self._r_values
 
 
 class IndividualMR(XbarR):
@@ -532,7 +670,7 @@ class IndividualMR(XbarR):
     def fit(self, values, labels):
         """
         Calculates the control limits and center lines for the mean and range charts.
-        :param values: The values to be used to calculate the control limits. The subgroup size must be a least 2.
+        :param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
         :type values: list, tuple or array
         :params labels: The labels for each value
         :type labels: list, tuple or array of strings
@@ -545,13 +683,12 @@ class IndividualMR(XbarR):
         values = np.array(values)
         labels = np.array(labels)
         array_missing_values(values)
-        # subgroups, n = values.shape
         if values.ndim > 1:
             raise ValueError('The number of samples per subgroup must be one.')
         self._n = 1
         self._x_center_line = np.mean(values)
         average_moving_range = np.mean(self.moving_ranges(values))
-        self._x_sigma = self._constants.constant(n=2, name='d2') * average_moving_range
+        self._x_sigma = average_moving_range / self._constants.constant(n=2, name='d2')
         self._x_upper_limit = self._x_center_line + (3 * self._x_sigma)
         self._x_lower_limit = self._x_center_line - (3 * self._x_sigma)
         self._r_upper_limit = self._constants.constant(n=2, name='D4') * average_moving_range
@@ -594,5 +731,3 @@ class IndividualMR(XbarR):
         :return: numpy array
         """
         return np.abs(np.ediff1d(values))
-
-

@@ -1,0 +1,16 @@
+,values,labels,moving_range,x_in_control,r_in_control
+0,39,A,,True,True
+1,41,B,2.0,True,True
+2,41,C,0.0,True,True
+3,41,D,0.0,True,True
+4,43,E,2.0,True,True
+5,44,F,1.0,True,True
+6,41,G,3.0,True,True
+7,42,H,1.0,True,True
+8,40,I,2.0,True,True
+9,41,J,1.0,True,True
+10,44,K,3.0,True,True
+11,40,L,4.0,True,True
+12,41,M,1.0,True,True
+13,49,N,8.0,False,False
+14,48,,1.0,False,True
