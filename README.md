@@ -57,7 +57,7 @@ For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIn
 ![chart_image.svg](examples%2FIndividualMR%2Fchart_image.svg)
 
 ### Calculation of control limits
-Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 45-46.</em>  
+Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
 
 $UNPL_{X} = \bar{X} + \Large \frac{3\bar{mR}}{d_{2}}$
 
