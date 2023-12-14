@@ -52,7 +52,8 @@ The control limits can be saved to JSON, and  loaded from JSON.
 The control limits can be set and retrieved as a dictionary.  
 The labels, individual values, moving ranges and status (in or out of control) can be retrieved as a pandas Dataframe.
 
-For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIndividualMR_example.ipynb)
+For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIndividualMR_example.ipynb)  
+
 ![chart_image.svg](examples%2FIndividualMR%2Fchart_image.svg)
 
 ### Calculation of control limits
@@ -78,7 +79,16 @@ $d_{2}$ is the value of the constant corresponding to n=2.
 
 $D_{4}$ is the value of the constant corresponding to n=2.  
 
- 
+ ## Run Chart
+Creates an interactive run chart using Plotly. 
+Each value can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
+The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
+The value of the median can be retrieved.  
+
+For an example of usage see: [Run_example.ipynb](examples%2FRun%2FRun_example.ipynb)  
+
+![chart_image.svg](examples%2FRun%2Fchart_image.svg)
+
 
 ### Factor values
 Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](constants/factor_values_for_shewart_charts.csv).  
