@@ -42,8 +42,8 @@ $D_{3}$ is the value of the constant corresponding to the subgroup size.
 $D_{4}$ is the value of the constant corresponding to the subgroup size.
 
 ## Shewart Individual and Moving Range Chart
-Creates an interactive individual Moving Range chart using Plotly. 
-individula values and moving ranges are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
+Creates an interactive individual Moving Range chart using Plotly.  
+Individual values and moving ranges are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
 Each value can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
 The control limits can be calculated from a set of data and the chart plotted.  
 New data can be plotted using the calculated control limits.  
@@ -80,7 +80,7 @@ $d_{2}$ is the value of the constant corresponding to n=2.
 $D_{4}$ is the value of the constant corresponding to n=2.  
 
  ## Run Chart
-Creates an interactive run chart using Plotly. 
+Creates an interactive run chart using Plotly.  
 Each value can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
 The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
 The value of the median can be retrieved.  
