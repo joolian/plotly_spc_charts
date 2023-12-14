@@ -58,9 +58,9 @@ For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIn
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 45-46.</em>  
 
-$UNPL_{X} = \bar{X} + \Large \frac{3\bar{R}}{d_{2}}$
+$UNPL_{X} = \bar{X} + \Large \frac{3\bar{mR}}{d_{2}}$
 
-$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{R}}{D_{4}}$
+$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{mR}}{D_{4}}$
 
 $CL_{X} = \bar{X}$
 
@@ -72,13 +72,13 @@ Where:
 
 $\bar{X}$ is the average of the individual values.
 
-$\bar{R}$ is the average of the moving ranges.
+$\bar{mR}$ is the average of the moving ranges. 
 
 $d_{2}$ is the value of the constant corresponding to n=2.  
 
 $D_{4}$ is the value of the constant corresponding to n=2.  
 
-$\bar{mR}$ is the average of the moving ranges.  
+ 
 
 ### Factor values
 Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](constants/factor_values_for_shewart_charts.csv).  
