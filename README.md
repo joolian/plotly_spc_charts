@@ -97,3 +97,5 @@ Values where extracted from:
 ## TODO
 Allow the use of Western Electric rules.  
 See: [ Western Electric Company, Statistical Quality Control Handbook., Indianapolis, Indiana: Western Electric Co](https://www.westernelectric.com/library#technical)
+
+Add np-chart, p-chart, c-chart and u-chart, EWMA-chart, CUSUM-chart and pareto-chart.
