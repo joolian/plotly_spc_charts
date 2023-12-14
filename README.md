@@ -76,6 +76,8 @@ $d_{2}$ is the value of the constant corresponding to n=2.
 
 $D_{4}$ is the value of the constant corresponding to n=2.  
 
+$\bar{mR}$ is the average of the moving ranges.  
+
 ### Factor values
 Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](constants/factor_values_for_shewart_charts.csv).  
 Values where extracted from: 
