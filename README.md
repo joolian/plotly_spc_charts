@@ -60,7 +60,7 @@ Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992
 
 $UNPL_{X} = \bar{X} + \Large \frac{3\bar{mR}}{d_{2}}$
 
-$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{mR}}{D_{4}}$
+$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{mR}}{d_{2}}$
 
 $CL_{X} = \bar{X}$
 
