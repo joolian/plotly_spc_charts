@@ -64,7 +64,9 @@ $LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{R}}{D_{4}}$
 
 $CL_{X} = \bar{X}$
 
-$UCL_{R} = D_{4}\bar{mR}$
+$UCL_{R} = D_{4}\bar{mR}$  
+
+$CL_{R} = \bar{mR}$  
 
 Where:  
 
