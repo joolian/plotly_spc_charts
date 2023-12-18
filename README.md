@@ -15,7 +15,7 @@ The subgroup labels, averages, ranges and status (in or out of control) can be r
 
 For an example of usage see: [XbarR_example.ipynb](/examples/XbarR/XbarR_example.ipynb)
 
-![XbarR_chart.svg](ehttps://github.com/joolian/plotly_spc_charts/blob/package/examples/XbarR/chart_image.svg)
+![XbarR_chart.svg](https://github.com/joolian/plotly_spc_charts/blob/package/examples/XbarR/chart_image.svg)
 
 
 ### Calculation of control limits
