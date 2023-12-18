@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spc_charts"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
   { name="Julian Wright", email="joolianwright@googlemail.com" },
 ]
@@ -20,6 +20,8 @@ dependencies = [
     "pandas",
     "numpy",
     "plotly",
+    "kaleido",
+    "importlib_resources",
 ]
 
 [project.urls]

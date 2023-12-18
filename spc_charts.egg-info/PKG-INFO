@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: spc-charts
-Version: 0.0.1
+Version: 0.0.3
 Summary: Plotly charts for Statistical Process Control.
 Author-email: Julian Wright <joolianwright@googlemail.com>
 Project-URL: Homepage, https://github.com/joolian/plotly_spc_charts
@@ -13,6 +13,8 @@ License-File: LICENSE
 Requires-Dist: pandas
 Requires-Dist: numpy
 Requires-Dist: plotly
+Requires-Dist: kaleido
+Requires-Dist: importlib_resources
 
 # Plotly charts for statistical process control
 
