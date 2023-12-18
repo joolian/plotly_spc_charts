@@ -6,27 +6,18 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from spc_charts import Constants, XbarR, IndividualMR, Run
+from spc_charts.spc_charts import Constants, XbarR, IndividualMR, Run
 
 
 class TestConstants:
 
-    @pytest.fixture
-    def constants_path(self):
-        return Path(__file__).parent.parent / 'constants/factor_values_for_shewart_charts.csv'
-
-    def test__load(self):
-        filename = 'factor_values_for_shewart_charts.csv'
-        with pytest.raises(Exception, match=f'Error: cannot find {filename}'):
-            Constants(Path(__file__).parent / filename)
-
-    def test_constants(self, constants_path):
-        f = Constants(constants_path)
+    def test_constants(self, ):
+        f = Constants()
         assert f.constant(n=50, name='c4') == 0.9949113047
 
     @pytest.mark.parametrize('n, name', [(2, 'thing'), (101, 'A')])
-    def test_constant_error(self, constants_path, n, name):
-        f = Constants(constants_path)
+    def test_constant_error(self, n, name):
+        f = Constants()
         with pytest.raises(Exception, match='[Cannot find thing for]'):
             f.constant(n=n, name=name)
 

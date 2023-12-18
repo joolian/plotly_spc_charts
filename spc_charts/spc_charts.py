@@ -8,12 +8,12 @@ look into returning the chart object as a figure widget for use in a notebook
 """
 
 import json
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from importlib_resources import files
 
 
 def array_missing_values(values):
@@ -32,11 +32,8 @@ class Constants:
         constant()
     """
 
-    def __init__(self, path):
-        """
-        :param path: The path and filename of the constants CSV file.
-        """
-        self._path = path
+    def __init__(self):
+        self._path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
         self._factors = None
         self._load()
 
@@ -48,7 +45,7 @@ class Constants:
         try:
             self._factors = pd.read_csv(self._path, index_col=0)
         except FileNotFoundError as e:
-            raise Exception(f'Error: cannot find {self._path.name} at {self._path.parent}')
+            raise Exception(f'Error: cannot find {self._path.name} at {self._path}')
 
     def constant(self, n, name):
         """
@@ -396,8 +393,9 @@ class XbarR:
         self._r_title = r_title
         self._chart_width = chart_width
         self._chart_height = chart_height
-
-        self._constants = Constants(path=Path(__file__).parent / 'constants/factor_values_for_shewart_charts.csv')
+        path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
+        # self._constants = Constants(path=Path('factor_values_for_shewart_charts.csv'))
+        self._constants = Constants()
         """Instance variable for the constants object"""
         self._n = None
         """Number of values in each subgroup"""

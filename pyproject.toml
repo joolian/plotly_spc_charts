@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spc_charts"
+version = "0.0.1"
+authors = [
+  { name="Julian Wright", email="joolianwright@googlemail.com" },
+]
+description = "Plotly charts for Statistical Process Control."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas",
+    "numpy",
+    "plotly",
+]
+
+[project.urls]
+Homepage = "https://github.com/joolian/plotly_spc_charts"
+
+[tool.setuptools.packages.find]
+include = ["spc_charts"]
+namespaces = false
+
+[tool.setuptools.package-data]
+spc_charts = ["*.csv"]
+
+[tool.setuptools]
+include-package-data = true
