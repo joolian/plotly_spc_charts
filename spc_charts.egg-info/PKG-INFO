@@ -1,9 +1,10 @@
 Metadata-Version: 2.1
 Name: spc-charts
-Version: 0.0.3
+Version: 0.0.6
 Summary: Plotly charts for Statistical Process Control.
 Author-email: Julian Wright <joolianwright@googlemail.com>
 Project-URL: Homepage, https://github.com/joolian/plotly_spc_charts
+Project-URL: Examples, https://github.com/joolian/plotly_spc_charts/tree/package/examples
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
@@ -72,7 +73,7 @@ The labels, individual values, moving ranges and status (in or out of control) c
 
 For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIndividualMR_example.ipynb)  
 
-![chart_image.svg](examples%2FIndividualMR%2Fchart_image.svg)
+![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/chart_image.png)
 
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
