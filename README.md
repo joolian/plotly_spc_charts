@@ -54,7 +54,7 @@ The labels, individual values, moving ranges and status (in or out of control) c
 
 For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIndividualMR_example.ipynb)  
 
-![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/chart_image.png)
+![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/package/examples/IndividualMR/chart_image.png)
 
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
