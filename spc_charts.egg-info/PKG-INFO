@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: spc-charts
-Version: 0.0.7
+Version: 0.0.9
 Summary: Plotly charts for Statistical Process Control.
 Author-email: Julian Wright <joolianwright@googlemail.com>
 Project-URL: Homepage, https://github.com/joolian/plotly_spc_charts
@@ -19,8 +19,6 @@ Requires-Dist: importlib_resources
 
 # Plotly charts for statistical process control
 
-In progress
-
 ## Shewart Average and Range Chart
 Creates an interactive Average and Range chart using Plotly.  
 Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
@@ -32,7 +30,7 @@ The control limits can be saved to JSON, and  loaded from JSON.
 The control limits can be set and retrieved as a dictionary.  
 The subgroup labels, averages, ranges and status (in or out of control) can be retrieved as a pandas Dataframe.
 
-For an example of usage see: [XbarR_example.ipynb](/examples/XbarR/XbarR_example.ipynb)
+For an example of usage see: [XbarR_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/XbarR/XbarR_example.ipynb)
 
 ![XbarR_chart.svg](https://github.com/joolian/plotly_spc_charts/blob/package/examples/XbarR/chart_image.svg)
 
@@ -71,9 +69,9 @@ The control limits can be saved to JSON, and  loaded from JSON.
 The control limits can be set and retrieved as a dictionary.  
 The labels, individual values, moving ranges and status (in or out of control) can be retrieved as a pandas Dataframe.
 
-For example usage see: [IndividualMR_example.ipynb](examples%2FIndividualMR%2FIndividualMR_example.ipynb)  
+For an example of usage see: [IndividualMR_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/IndividualMR_example.ipynb)
 
-![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/package/examples/IndividualMR/chart_image.png)
+![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/chart_image.png)
 
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
@@ -104,16 +102,17 @@ Each value can be labelled and the labels will be shown on the chart when the mo
 The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
 The value of the median can be retrieved.  
 
-For an example of usage see: [Run_example.ipynb](examples%2FRun%2FRun_example.ipynb)  
+For an example of usage see: [Run_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/Run_example.ipynb)  
 
-![chart_image.svg](examples%2FRun%2Fchart_image.svg)
+![chart_image.svg](https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/chart_image.svg)
 
 ## Constants
-Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](constants/factor_values_for_shewart_charts.csv).  
+Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](https://github.com/joolian/plotly_spc_charts/blob/main/spc_charts/factor_values_for_shewart_charts.csv).  
 Values where extracted from: 
 <em>[A Note on the Factor Values of Three Common Shewhart Variables Control Charts. Henry H. Bi. 2015. Communications in Statistics - Theory and Methods (0361-0926). 44(13): 2655-2673. DOI:10.1080/03610926.2014.968732](https://www.researchgate.net/publication/275236350_A_Note_on_the_Factor_Values_of_Three_Common_Shewhart_Variables_Control_Charts_Henry_H_Bi_2015_Communications_in_Statistics_-_Theory_and_Methods_0361-0926_4413_2655-2673_httpdxdoiorg1010800361092620149)</em>
+
 ## TODO
 Allow the use of Western Electric rules.  
 See: ,<em>[ Western Electric Company, Statistical Quality Control Handbook., Indianapolis, Indiana: Western Electric Co](https://www.westernelectric.com/library#technical)</em>
 
-Add np-chart, p-chart, c-chart and u-chart, EWMA-chart, CUSUM-chart and pareto-chart.
+Add np-chart, p-chart, c-chart and u-chart, EWMA-chart, CUSUM-chart, pareto-chart and multi-variate charts.
