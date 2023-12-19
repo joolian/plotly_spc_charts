@@ -84,14 +84,21 @@ averages_ranges</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.IndividualMR.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.IndividualMR.fit" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates the control limits and center lines for the mean and range charts.
-:param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
-:type values: list, tuple or array
-:params labels: The labels for each value
-:type labels: list, tuple or array of strings
-:type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
-:raises: ValueError: if there are missing values in values.
-:raises: ValueError: if there are more than one column in values.</p>
+<dd><p>Calculates the control limits and center lines for the mean and range charts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p>
+</dd>
+<dt class="field-even">Params labels<span class="colon">:</span></dt>
+<dd class="field-even"><p>The labels for each value</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there are more than one column in values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -102,23 +109,39 @@ averages_ranges</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.IndividualMR.moving_ranges">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">moving_ranges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.IndividualMR.moving_ranges" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates the moving ranges for a single dimension array
-:param values: single dimension array of values
-:return: numpy array</p>
+<dd><p>Calculates the moving ranges for a single dimension array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> – single dimension array of values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy array</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.IndividualMR.predict">
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.IndividualMR.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the moving range values for plotting on the Range chart.
-Calculates whether the values and moving ranges are outside their respective limits.
-:params values: the values
-:type values: list, tuple or array
-:params labels: The labels for each value
-:type labels: list, tuple or array of strings
-:raises: Exception: if the control limits have not been calculated.
-:raises: ValueError: if there are missing values in values.
-:raises: ValueError: if there are more than one column in values.</p>
+Calculates whether the values and moving ranges are outside their respective limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params values<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the values</p>
+</dd>
+<dt class="field-even">Params labels<span class="colon">:</span></dt>
+<dd class="field-even"><p>The labels for each value</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Exception: if the control limits have not been calculated.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there are more than one column in values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -213,14 +236,21 @@ averages_ranges</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.fit" title="Link to this definition">¶</a></dt>
-<dd><p>Calculates the control limits and center lines for the mean and range charts.
-:param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
-:type values: list, tuple or array
-:params labels: The labels for each subgroup
-:type labels: list, tuple or array of strings
-:type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
-:raises: ValueError: if there are missing values in values.
-:raises: ValueError: if there are less than 2 columns in values.</p>
+<dd><p>Calculates the control limits and center lines for the mean and range charts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p>
+</dd>
+<dt class="field-even">Params labels<span class="colon">:</span></dt>
+<dd class="field-even"><p>The labels for each subgroup</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there are less than 2 columns in values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -231,8 +261,12 @@ averages_ranges</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.load">
 <span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.load" title="Link to this definition">¶</a></dt>
-<dd><p>Loads the chart parameters from a JSON file.
-:param path: The full path and filename of the file to load</p>
+<dd><p>Loads the chart parameters from a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – The full path and filename of the file to load</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -244,22 +278,36 @@ averages_ranges</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.plot" title="Link to this definition">¶</a></dt>
-<dd><p>Plots the mean and range values on Plotly chart.
-:raises: ValueError: if there is no data to plot</p>
+<dd><p>Plots the mean and range values on Plotly chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there is no data to plot</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.predict">
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Transform subgroup values into mean and moving range values for plotting
-on a chart. Calculates whether the means and ranges are outside their respective limits.
-:params values: Each row is a subgroup and each column is a value of the subgroup.
-:type values: list, tuple or array
-:params labels: The labels for each subgroup
-:type labels: list, tuple or array of strings
-:raises: Exception: if the control limits have not been calculated.
-:raises: ValueError: if there are missing values in values.
-:raises: ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.</p>
+on a chart. Calculates whether the means and ranges are outside their respective limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Params values<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Each row is a subgroup and each column is a value of the subgroup.</p>
+</dd>
+<dt class="field-even">Params labels<span class="colon">:</span></dt>
+<dd class="field-even"><p>The labels for each subgroup</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Exception: if the control limits have not been calculated.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -281,8 +329,12 @@ on a chart. Calculates whether the means and ranges are outside their respective
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.save" title="Link to this definition">¶</a></dt>
-<dd><p>Saves the chart parameters to a json file.
-:param path: The full path and filename.</p>
+<dd><p>Saves the chart parameters to a json file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – The full path and filename.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

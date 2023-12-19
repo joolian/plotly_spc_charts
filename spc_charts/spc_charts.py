@@ -433,6 +433,7 @@ class XbarR:
     def _subgroup_range_mean(values):
         """
         Calculates the subgroup ranges and subgroup means
+
         :param values: numpy.Array each row is a subgroup and each column is a value of the subgroup.
         :return: The subgroup means and the subgroup ranges.
         """
@@ -444,6 +445,7 @@ class XbarR:
     def fit(self, values, labels):
         """
         Calculates the control limits and center lines for the mean and range charts.
+
         :param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
         :type values: list, tuple or array
         :params labels: The labels for each subgroup
@@ -475,6 +477,7 @@ class XbarR:
         """
         Transform subgroup values into mean and moving range values for plotting
         on a chart. Calculates whether the means and ranges are outside their respective limits.
+
         :params values: Each row is a subgroup and each column is a value of the subgroup.
         :type values: list, tuple or array
         :params labels: The labels for each subgroup
@@ -498,6 +501,7 @@ class XbarR:
     def plot(self):
         """
         Plots the mean and range values on Plotly chart.
+
         :raises: ValueError: if there is no data to plot
         """
         if self._x_values is None:
@@ -541,6 +545,7 @@ class XbarR:
     def _in_control(values, upper_limit, lower_limit):
         """
         Is each value within the control limits?
+
         :param values: array of values
         :param upper_limit: the upper control limit
         :param lower_limit: the lower control limit
@@ -567,6 +572,7 @@ class XbarR:
     def _dict_to_params(self, params):
         """
         Sets the values of the chart parameters from a dictionary.
+
         :param params: The values of the chart parameters as a dictionary
         """
         self._n = params['n']
@@ -583,6 +589,7 @@ class XbarR:
     def save(self, path):
         """
         Saves the chart parameters to a json file.
+
         :param path: The full path and filename.
         """
         if not self._fitted:
@@ -594,6 +601,7 @@ class XbarR:
     def load(self, path):
         """
         Loads the chart parameters from a JSON file.
+
         :param path: The full path and filename of the file to load
         """
         with open(path, 'r') as fp:
@@ -609,7 +617,8 @@ class XbarR:
     @params.setter
     def params(self, params):
         """
-        Sets the chart parameters
+        Sets the chart parameters.
+
         :param params: The chart parameters
         :type params: dictionary
         :return:
@@ -663,6 +672,7 @@ class IndividualMR(XbarR):
     def fit(self, values, labels):
         """
         Calculates the control limits and center lines for the mean and range charts.
+
         :param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
         :type values: list, tuple or array
         :params labels: The labels for each value
@@ -693,6 +703,7 @@ class IndividualMR(XbarR):
         """
         Calculates the moving range values for plotting on the Range chart.
         Calculates whether the values and moving ranges are outside their respective limits.
+
         :params values: the values
         :type values: list, tuple or array
         :params labels: The labels for each value
@@ -718,6 +729,7 @@ class IndividualMR(XbarR):
     def moving_ranges(values):
         """
         Calculates the moving ranges for a single dimension array
+        
         :param values: single dimension array of values
         :return: numpy array
         """
