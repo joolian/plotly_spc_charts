@@ -473,6 +473,12 @@ class XbarR:
         self._fitted = True
         self.predict(values, labels)
 
+    def thing(self, bum):
+        """
+
+        :param bum:
+        :return:
+        """
     def predict(self, values, labels):
         """
         Transform subgroup values into mean and moving range values for plotting
@@ -534,7 +540,7 @@ class XbarR:
         """
         Saves an image of the chart to a file.
 
-        :params path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
+        :param path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         if self._chart:
             self._chart.save(path)
@@ -729,7 +735,7 @@ class IndividualMR(XbarR):
     def moving_ranges(values):
         """
         Calculates the moving ranges for a single dimension array
-        
+
         :param values: single dimension array of values
         :return: numpy array
         """
