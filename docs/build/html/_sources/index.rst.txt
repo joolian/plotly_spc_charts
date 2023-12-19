@@ -10,7 +10,8 @@ Welcome to spc_charts's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-intro
+   intro
+   modules
 
 Indices and tables
 ==================
