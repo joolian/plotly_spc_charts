@@ -12,6 +12,7 @@ Welcome to spc_charts's documentation!
 
    intro
    modules
+   spc_charts
 
 Indices and tables
 ==================
