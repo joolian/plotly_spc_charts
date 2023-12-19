@@ -2,4 +2,3 @@ pandas
 numpy
 plotly
 importlib_resources
-json
