@@ -1,2 +1,5 @@
-bluepy
+pandas
 numpy
+plotly
+from importlib_resources import files
+json
