@@ -353,9 +353,8 @@ class Run:
     def save_chart(self, path):
         """
         Saves an image of the chart to a file.
-        :params path: The full path and filename to save to. The file type is
-            automatically determined by the filename extension. Allowed files
-            types are PNG, JPEG, WebP, SVG and PDF.
+
+        :params path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         self._chart.save(path)
 
@@ -450,9 +449,8 @@ class XbarR:
         :params labels: The labels for each subgroup
         :type labels: list, tuple or array of strings
         :type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
-        :raises:
-            ValueError: if there are missing values in values.
-            ValueError: if there are less than 2 columns in values.
+        :raises: ValueError: if there are missing values in values.
+        :raises: ValueError: if there are less than 2 columns in values.
         """
         values = np.array(values)
         labels = np.array(labels)
@@ -481,12 +479,9 @@ class XbarR:
         :type values: list, tuple or array
         :params labels: The labels for each subgroup
         :type labels: list, tuple or array of strings
-        :raises:
-            Exception: if the control limits have not been calculated.
-            ValueError: if there are missing values in values.
-            ValueError: if the number of values in the subgroups used to calculate the control limits is different
-                        to the number of subgroups in values.
-
+        :raises: Exception: if the control limits have not been calculated.
+        :raises: ValueError: if there are missing values in values.
+        :raises: ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.
         """
         if not self._fitted:
             raise Exception('Error: chart has not been fitted')
@@ -534,9 +529,8 @@ class XbarR:
     def save_chart(self, path):
         """
         Saves an image of the chart to a file.
-        :params path: The full path and filename to save to. The file type is
-            automatically determined by the filename extension. Allowed files
-            types are PNG, JPEG, WebP, SVG and PDF.
+
+        :params path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         if self._chart:
             self._chart.save(path)
@@ -627,11 +621,12 @@ class XbarR:
     def predicted(self):
         """
         A pandas DataFrame of the predicted data. Columns are:
-            'labels': the labels for each value plotted.
-            'x_values: the values plotted on the X chart.
-            'r_values: the values plotted on the R chart.
-            'x_in_control: True if the value plotted on the Averages chart is within the control limits.
-            'r_in_control: True if the value plotted on the Range chart in within the control limits.
+        'labels': the labels for each value plotted.
+        'x_values: the values plotted on the X chart.
+        'r_values: the values plotted on the R chart.
+        'x_in_control: True if the value plotted on the Averages chart is within the control limits.
+        'r_in_control: True if the value plotted on the Range chart in within the control limits.
+
         :return: pandas.DataFrame
         """
         return pd.DataFrame(
@@ -673,9 +668,8 @@ class IndividualMR(XbarR):
         :params labels: The labels for each value
         :type labels: list, tuple or array of strings
         :type values: numpy.Array where each row is a subgroup and each column is a value in a subgroup.
-        :raises:
-            ValueError: if there are missing values in values.
-            ValueError: if there are more than one column in values.
+        :raises: ValueError: if there are missing values in values.
+        :raises: ValueError: if there are more than one column in values.
 
         """
         values = np.array(values)
@@ -703,10 +697,9 @@ class IndividualMR(XbarR):
         :type values: list, tuple or array
         :params labels: The labels for each value
         :type labels: list, tuple or array of strings
-        :raises:
-            Exception: if the control limits have not been calculated.
-            ValueError: if there are missing values in values.
-            ValueError: if there are more than one column in values.
+        :raises: Exception: if the control limits have not been calculated.
+        :raises: ValueError: if there are missing values in values.
+        :raises: ValueError: if there are more than one column in values.
 
         """
         if not self._fitted:
