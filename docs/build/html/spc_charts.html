@@ -50,11 +50,21 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Constants.constant">
 <span class="sig-name descname"><span class="pre">constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.Constants.constant" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the value of the constant given the constant’s name and the value of n.
-:param n: the value of n
-:param name: the name of the constant
-:return: the value of the constant
-:raises: Exception: if the constant is not found</p>
+<dd><p>Returns the value of the constant given the constant’s name and the value of n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – the value of n</p></li>
+<li><p><strong>name</strong> – the name of the constant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the value of the constant</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Exception: if the constant is not found</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -72,8 +82,8 @@ save()
 load()
 save_chart()</p>
 </dd>
-<dt>Properties:</dt><dd><p>out_of_control
-averages_ranges</p>
+<dt>Properties:</dt><dd><p>params
+predicted</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -87,16 +97,16 @@ averages_ranges</p>
 <dd><p>Calculates the control limits and center lines for the mean and range charts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p>
-</dd>
-<dt class="field-even">Params labels<span class="colon">:</span></dt>
-<dd class="field-even"><p>The labels for each value</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em><em> of </em><em>strings</em>) – The labels for each value</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p>ValueError: if there are more than one column in values.</p>
+<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there are more than one column in values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -126,20 +136,20 @@ averages_ranges</p>
 <dd><p>Calculates the moving range values for plotting on the Range chart.
 Calculates whether the values and moving ranges are outside their respective limits.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Params values<span class="colon">:</span></dt>
-<dd class="field-odd"><p>the values</p>
-</dd>
-<dt class="field-even">Params labels<span class="colon">:</span></dt>
-<dd class="field-even"><p>The labels for each value</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Exception: if the control limits have not been calculated.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em>) – the values</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em><em> of </em><em>strings</em>) – The labels for each value</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+<dd class="field-even"><p>Exception: if the control limits have not been calculated.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ValueError: if there are more than one column in values.</p>
+<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there are more than one column in values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -150,24 +160,40 @@ Calculates whether the values and moving ranges are outside their respective lim
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Run">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spc_charts.spc_charts.</span></span><span class="sig-name descname"><span class="pre">Run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Average'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chart_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chart_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.Run" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>run chart</p>
+<p>Run chart</p>
+<dl class="simple">
+<dt>methods:</dt><dd><p>save()
+plot()</p>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Run.centre_line">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centre_line</span></span><a class="headerlink" href="#spc_charts.spc_charts.Run.centre_line" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the value of the chart center line</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Run.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.Run.plot" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Plots the chart.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there is no data to plot</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Run.save_chart">
 <span class="sig-name descname"><span class="pre">save_chart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.Run.save_chart" title="Link to this definition">¶</a></dt>
 <dd><p>Saves an image of the chart to a file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Params path<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,6 +205,10 @@ Calculates whether the values and moving ranges are outside their respective lim
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spc_charts.spc_charts.</span></span><span class="sig-name descname"><span class="pre">RunChart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.RunChart" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Plotly run chart</p>
+<dl class="simple">
+<dt>Methods:</dt><dd><p>save()</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.RunChart.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.RunChart.save" title="Link to this definition">¶</a></dt>
@@ -200,13 +230,18 @@ save()</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XRChart.draw">
 <span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XRChart.draw" title="Link to this definition">¶</a></dt>
-<dd><p>Creates a plotly chart</p>
+<dd><p>Creates a plotly chart and shows it.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XRChart.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XRChart.save" title="Link to this definition">¶</a></dt>
-<dd><p>Saves the chart as an image file</p>
+<dd><p>Saves the chart as an image file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – Path and filename to save the chart to.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -224,8 +259,8 @@ save()
 load()
 save_chart()</p>
 </dd>
-<dt>Properties:</dt><dd><p>out_of_control
-averages_ranges</p>
+<dt>Properties:</dt><dd><p>params
+predicted</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -239,16 +274,16 @@ averages_ranges</p>
 <dd><p>Calculates the control limits and center lines for the mean and range charts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p>
-</dd>
-<dt class="field-even">Params labels<span class="colon">:</span></dt>
-<dd class="field-even"><p>The labels for each subgroup</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>numpy.Array where each row is a subgroup and each column is a value in a subgroup.</em>) – The values to be used to calculate the control limits. The subgroup size must be at least 2.</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em><em> of </em><em>strings</em>) – The labels for each subgroup</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p>ValueError: if there are less than 2 columns in values.</p>
+<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ValueError: if there are less than 2 columns in values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,20 +327,20 @@ averages_ranges</p>
 <dd><p>Transform subgroup values into mean and moving range values for plotting
 on a chart. Calculates whether the means and ranges are outside their respective limits.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Params values<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Each row is a subgroup and each column is a value of the subgroup.</p>
-</dd>
-<dt class="field-even">Params labels<span class="colon">:</span></dt>
-<dd class="field-even"><p>The labels for each subgroup</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Exception: if the control limits have not been calculated.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em>) – Each row is a subgroup and each column is a value of the subgroup.</p></li>
+<li><p><strong>labels</strong> (<em>list</em><em>, </em><em>tuple</em><em> or </em><em>array</em><em> of </em><em>strings</em>) – The labels for each subgroup</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p>ValueError: if there are missing values in values.</p>
+<dd class="field-even"><p>Exception: if the control limits have not been calculated.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.</p>
+<dd class="field-odd"><p>ValueError: if there are missing values in values.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,12 +348,14 @@ on a chart. Calculates whether the means and ranges are outside their respective
 <dl class="py property">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.predicted">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predicted</span></span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.predicted" title="Link to this definition">¶</a></dt>
-<dd><p>A pandas DataFrame of the predicted data. Columns are:
-‘labels’: the labels for each value plotted.
-‘x_values: the values plotted on the X chart.
-‘r_values: the values plotted on the R chart.
-‘x_in_control: True if the value plotted on the Averages chart is within the control limits.
-‘r_in_control: True if the value plotted on the Range chart in within the control limits.</p>
+<dd><p>A pandas DataFrame of the predicted data. Columns are:</p>
+<ul class="simple">
+<li><p>labels: the labels for each value plotted.</p></li>
+<li><p>x_values: the values plotted on the X chart.</p></li>
+<li><p>r_values: the values plotted on the R chart.</p></li>
+<li><p>x_in_control: True if the value plotted on the Averages chart is within the control limits.</p></li>
+<li><p>r_in_control: True if the value plotted on the Range chart in within the control limits.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pandas.DataFrame</p>
@@ -348,25 +385,20 @@ on a chart. Calculates whether the means and ranges are outside their respective
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.thing">
-<span class="sig-name descname"><span class="pre">thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bum</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.thing" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>bum</strong> – </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.array_missing_values">
 <span class="sig-prename descclassname"><span class="pre">spc_charts.spc_charts.</span></span><span class="sig-name descname"><span class="pre">array_missing_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.array_missing_values" title="Link to this definition">¶</a></dt>
-<dd><p>Raises a ValueError if there are missing values in values.</p>
+<dd><p>Check an array for missing values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> – array of values</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p>ValueError: if there is a missing value</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
