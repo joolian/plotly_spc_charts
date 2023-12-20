@@ -1,5 +1,7 @@
 # Plotly charts for statistical process control
 
+[![Documentation Status](https://readthedocs.org/projects/plotly-spc-charts/badge/?version=latest)](https://plotly-spc-charts.readthedocs.io/en/latest/?badge=latest)
+
 ## Shewart Average and Range Chart
 Creates an interactive Average and Range chart using Plotly.  
 Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
