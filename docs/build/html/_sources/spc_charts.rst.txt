@@ -18,4 +18,3 @@ Module contents
 .. automodule:: spc_charts
    :members:
    :undoc-members:
-   :show-inheritance:

@@ -46,29 +46,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">spc_charts</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">spc_charts package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-spc_charts.spc_charts">spc_charts.spc_charts module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.Constants"><code class="docutils literal notranslate"><span class="pre">Constants</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.IndividualMR"><code class="docutils literal notranslate"><span class="pre">IndividualMR</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.Run"><code class="docutils literal notranslate"><span class="pre">Run</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.RunChart"><code class="docutils literal notranslate"><span class="pre">RunChart</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.XRChart"><code class="docutils literal notranslate"><span class="pre">XRChart</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.XbarR"><code class="docutils literal notranslate"><span class="pre">XbarR</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.array_missing_values"><code class="docutils literal notranslate"><span class="pre">array_missing_values()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#module-spc_charts">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">spc_charts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">spc_charts package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-spc_charts.spc_charts">spc_charts.spc_charts module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#spc_charts.spc_charts.Constants"><code class="docutils literal notranslate"><span class="pre">Constants</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.Constants.constant"><code class="docutils literal notranslate"><span class="pre">Constants.constant()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spc_charts.spc_charts.Constants.thing"><code class="docutils literal notranslate"><span class="pre">Constants.thing()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spc_charts.spc_charts.IndividualMR"><code class="docutils literal notranslate"><span class="pre">IndividualMR</span></code></a><ul>
@@ -129,7 +113,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">spc_charts</a></li>
       <li class="breadcrumb-item active">spc_charts package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/spc_charts.rst.txt" rel="nofollow"> View page source</a>
@@ -152,8 +135,9 @@
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Constants">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spc_charts.spc_charts.</span></span><span class="sig-name descname"><span class="pre">Constants</span></span><a class="headerlink" href="#spc_charts.spc_charts.Constants" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Represents a table of constants</p>
 <dl class="simple">
+<dt>Represents a table of constants for values of n from 2 to 100:</dt><dd><p>A, A2, A3, B3, B4, B5, B6, c4, d2, d3, D1, D2, D3, D4, E2</p>
+</dd>
 <dt>Methods:</dt><dd><p>constant()</p>
 </dd>
 </dl>
@@ -177,6 +161,11 @@
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="spc_charts.spc_charts.Constants.thing">
+<span class="sig-name descname"><span class="pre">thing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.Constants.thing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -194,6 +183,17 @@ save_chart()</p>
 </dd>
 <dt>Properties:</dt><dd><p>params
 predicted</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – The chart title</p></li>
+<li><p><strong>r_title</strong> – The title for the y-axis of the range chart</p></li>
+<li><p><strong>x_title</strong> – The title for the y-axis of the mean chart</p></li>
+<li><p><strong>chart_width</strong> – The chart width in pixels, defaults to 800.</p></li>
+<li><p><strong>chart_height</strong> – The chart height in pixels, defaults to 600.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -276,14 +276,22 @@ Calculates whether the values and moving ranges are outside their respective lim
 plot()</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – The values to plot. Must be numpy.array like</p></li>
+<li><p><strong>labels</strong> – The labels for the values. Must be numpy.array like</p></li>
+<li><p><strong>title</strong> – The chart title</p></li>
+<li><p><strong>x_title</strong> – The title for the y-axis</p></li>
+<li><p><strong>chart_width</strong> – The chart width in pixels, defaults to 800.</p></li>
+<li><p><strong>chart_height</strong> – The chart height in pixels, defaults to 600.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.Run.centre_line">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centre_line</span></span><a class="headerlink" href="#spc_charts.spc_charts.Run.centre_line" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>the value of the chart center line</p>
-</dd>
-</dl>
+<dd><p>Returns the value of the center line (median).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -319,10 +327,28 @@ plot()</p>
 <dt>Methods:</dt><dd><p>save()</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_values</strong> – The values to plot. Must be numpy.array like</p></li>
+<li><p><strong>labels</strong> – The labels for each of the x_values.</p></li>
+<li><p><strong>x_center</strong> – The value of the charts center line.</p></li>
+<li><p><strong>title</strong> – The title of the chart</p></li>
+<li><p><strong>x_title</strong> – The title for the y-axis</p></li>
+<li><p><strong>width</strong> – The width of the chart in pixels</p></li>
+<li><p><strong>height</strong> – The height of the chart in pixels</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.RunChart.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spc_charts.spc_charts.RunChart.save" title="Link to this definition"></a></dt>
 <dd><p>Saves the chart as an image file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – the full path and filename to save the file to.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -335,6 +361,28 @@ plot()</p>
 <dl class="simple">
 <dt>Methods:</dt><dd><p>draw()
 save()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_values</strong> – the values to be plotted on the X chart</p></li>
+<li><p><strong>labels</strong> – the labels for the values plotted on the X and R charts</p></li>
+<li><p><strong>x_center</strong> – The center line of the X chart</p></li>
+<li><p><strong>x_status</strong> – Boolean array: whether the values in x_values are in control.</p></li>
+<li><p><strong>x_upper_limit</strong> – the upper limit for the X chart</p></li>
+<li><p><strong>x_lower_limit</strong> – the lower limit for the X chart</p></li>
+<li><p><strong>r_values</strong> – the values to be plotted on the R chart</p></li>
+<li><p><strong>r_status</strong> – Boolean array: whether the values in x_values are in control.</p></li>
+<li><p><strong>r_lower_limit</strong> – the lower limit of the R chart</p></li>
+<li><p><strong>r_upper_limit</strong> – the upper limit of the R chart</p></li>
+<li><p><strong>r_center</strong> – the center line of the R chart</p></li>
+<li><p><strong>title</strong> – the title for the chart</p></li>
+<li><p><strong>x_title</strong> – the title of the y-axis of the X chart</p></li>
+<li><p><strong>r_title</strong> – the title of the y-axis of the R chart</p></li>
+<li><p><strong>width</strong> – the width of the chart in pixels</p></li>
+<li><p><strong>height</strong> – the height of the chart in pixels</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
@@ -371,6 +419,17 @@ save_chart()</p>
 </dd>
 <dt>Properties:</dt><dd><p>params
 predicted</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – The chart title</p></li>
+<li><p><strong>r_title</strong> – The title for the y-axis of the range chart</p></li>
+<li><p><strong>x_title</strong> – The title for the y-axis of the mean chart</p></li>
+<li><p><strong>chart_width</strong> – The chart width in pixels, defaults to 800.</p></li>
+<li><p><strong>chart_height</strong> – The chart height in pixels, defaults to 600.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -417,7 +476,27 @@ predicted</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="spc_charts.spc_charts.XbarR.params">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#spc_charts.spc_charts.XbarR.params" title="Link to this definition"></a></dt>
-<dd><p>Returns the chart parameters</p>
+<dd><p>Return or set the chart parameters as a dictionary:</p>
+<ul class="simple">
+<li><p>n : the number of values in each subgroup</p></li>
+<li><p>x_upper_limit: the upper limit for the X chart</p></li>
+<li><p>x_lower_limit’: the lower limit for the X chart</p></li>
+<li><p>x_center_line: the center line of the X chart</p></li>
+<li><p>r_upper_limit: the upper limit of the R chart</p></li>
+<li><p>r_lower_limit: the lower limit of the R chart</p></li>
+<li><p>r_center_line: the center line of the R chart</p></li>
+<li><p>title: the chart title</p></li>
+<li><p>x_title: the title for the y-axis of the X chart</p></li>
+<li><p>r_title: the title for the y-axis of the R chart</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> – dictionary of the parameters</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

@@ -29,7 +29,8 @@ def array_missing_values(values):
 
 class Constants:
     """
-    Represents a table of constants
+    Represents a table of constants for values of n from 2 to 100:
+     A, A2, A3, B3, B4, B5, B6, c4, d2, d3, D1, D2, D3, D4, E2
 
     Methods:
         constant()
@@ -65,6 +66,9 @@ class Constants:
         except KeyError as e:
             raise Exception(f'Cannot find {name} for n={n}')
 
+    def thing(self):
+        print('Hi Ju')
+
 
 class RunChart:
     """
@@ -76,8 +80,6 @@ class RunChart:
 
     def __init__(self, x_values, labels, x_center, title, x_title, width, height):
         """
-        Initiates and shows the chart.
-        
         :param x_values: The values to plot. Must be numpy.array like
         :param labels: The labels for each of the x_values.
         :param x_center: The value of the charts center line.
@@ -159,7 +161,11 @@ class RunChart:
         self._fig.show()
 
     def save(self, path):
-        """Saves the chart as an image file"""
+        """
+        Saves the chart as an image file
+
+        :param path: the full path and filename to save the file to.
+        """
         self._fig.write_image(path)
 
 
@@ -397,10 +403,7 @@ class Run:
 
     @property
     def centre_line(self):
-        """
-
-        :return: the value of the chart center line
-        """
+        """Returns the value of the center line (median)."""
         return self._x_center_line
 
     def save_chart(self, path):
@@ -664,7 +667,23 @@ class XbarR:
 
     @property
     def params(self):
-        """Returns the chart parameters"""
+        """
+        Return or set the chart parameters as a dictionary:
+
+        * n : the number of values in each subgroup
+        * x_upper_limit: the upper limit for the X chart
+        * x_lower_limit': the lower limit for the X chart
+        * x_center_line: the center line of the X chart
+        * r_upper_limit: the upper limit of the R chart
+        * r_lower_limit: the lower limit of the R chart
+        * r_center_line: the center line of the R chart
+        * title: the chart title
+        * x_title: the title for the y-axis of the X chart
+        * r_title: the title for the y-axis of the R chart
+
+        :param params: dictionary of the parameters
+        :returns: dictionary
+        """
         return self._params_to_dict()
 
     @params.setter
