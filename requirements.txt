@@ -2,3 +2,4 @@ pandas
 numpy
 plotly
 importlib_resources
+sphinx_rtd_theme
