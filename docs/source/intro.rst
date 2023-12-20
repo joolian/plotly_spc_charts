@@ -26,7 +26,7 @@ For an example of usage see:
 `XbarR_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/XbarR/XbarR_example.ipynb>`__
 
 .. image::
-   /_static/images/XbarR.svg
+   ../images/XbarR.svg
    :alt: XbarR.svg
 
 Calculation of control limits
@@ -82,7 +82,7 @@ For an example of usage see:
 `IndividualMR_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/IndividualMR_example.ipynb>`__
 
 .. image::
-   /_static/images/IndividualMR.svg
+   ../images/IndividualMR.svg
    :alt: IndividualMR.svg
 
 .. _calculation-of-control-limits-1:
@@ -124,7 +124,7 @@ For an example of usage see:
 `Run_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/Run_example.ipynb>`__
 
 .. image::
-   /_static/images/Run.svg
+   ..//images/Run.svg
    :alt: Run.svg
 
 
