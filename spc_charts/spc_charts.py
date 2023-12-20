@@ -76,7 +76,8 @@ class RunChart:
 
     def __init__(self, x_values, labels, x_center, title, x_title, width, height):
         """
-
+        Initiates and shows the chart.
+        
         :param x_values: The values to plot. Must be numpy.array like
         :param labels: The labels for each of the x_values.
         :param x_center: The value of the charts center line.
