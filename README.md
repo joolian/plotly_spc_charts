@@ -23,7 +23,7 @@ $UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$
   
 $LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
 
-$CL_{bar{X}} = \bar{\bar{X}}
+$CL_{bar{X}} = \bar{\bar{X}}$
   
 $UCL_{R} = D_{4}\bar{R}$  
   
