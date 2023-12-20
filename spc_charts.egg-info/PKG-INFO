@@ -1,9 +1,10 @@
 Metadata-Version: 2.1
 Name: spc-charts
-Version: 0.0.9
+Version: 0.0.10
 Summary: Plotly charts for Statistical Process Control.
 Author-email: Julian Wright <joolianwright@googlemail.com>
 Project-URL: Homepage, https://github.com/joolian/plotly_spc_charts
+Project-URL: Documentation, https://plotly-spc-charts.readthedocs.io/en/latest/
 Project-URL: Examples, https://github.com/joolian/plotly_spc_charts/tree/package/examples
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License

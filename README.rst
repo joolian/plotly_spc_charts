@@ -1,7 +1,3 @@
-Introduction
-============
-spc-charts is for the creation of Plotly charts for use in Statistical Process Control.
-
 Plotly charts for statistical process control
 =============================================
 
@@ -25,9 +21,11 @@ Shewart Average and Range Chart
 For an example of usage see:
 `XbarR_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/XbarR/XbarR_example.ipynb>`__
 
-.. image::
-   /_static/images/XbarR.svg
-   :alt: XbarR.svg
+.. figure::
+   https://github.com/joolian/plotly_spc_charts/blob/package/examples/XbarR/chart_image.svg
+   :alt: XbarR_chart.svg
+
+   XbarR_chart.svg
 
 Calculation of control limits
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,9 +79,11 @@ Shewart Individual and Moving Range Chart
 For an example of usage see:
 `IndividualMR_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/IndividualMR_example.ipynb>`__
 
-.. image::
-   /_static/images/IndividualMR.svg
-   :alt: IndividualMR.svg
+.. figure::
+   https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/chart_image.png
+   :alt: chart_image.png
+
+   chart_image.png
 
 .. _calculation-of-control-limits-1:
 
@@ -123,11 +123,11 @@ Where:
 For an example of usage see:
 `Run_example.ipynb <https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/Run_example.ipynb>`__
 
-.. image::
-   /_static/images/Run.svg
-   :alt: Run.svg
+.. figure::
+   https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/chart_image.svg
+   :alt: chart_image.svg
 
-
+   chart_image.svg
 
 Constants
 ---------
