@@ -66,9 +66,6 @@ class Constants:
         except KeyError as e:
             raise Exception(f'Cannot find {name} for n={n}')
 
-    def thing(self):
-        print('Hi Ju')
-
 
 class RunChart:
     """
