@@ -41,7 +41,7 @@ Incorporated, p. 44.*
 
    :math:`LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}`
 
-   :math:`$CL_{\bar{X}} = \bar{\bar{X}}`
+   :math:`CL_{\bar{X}} = \bar{\bar{X}}`
 
    :math:`UCL_{R} = D_{4}\bar{R}`
 
@@ -148,7 +148,7 @@ TODO
 ----
 
 | Allow the use of Western Electric rules.
-| See: ,\ `Western Electric Company, Statistical Quality Control
+| See: \ `Western Electric Company, Statistical Quality Control
   Handbook., Indianapolis, Indiana: Western Electric
   Co <https://www.westernelectric.com/library#technical>`__\
 
