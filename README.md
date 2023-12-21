@@ -25,7 +25,7 @@ Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992
   
 &nbsp;&nbsp;&nbsp;&nbsp; $LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
 
-&nbsp;&nbsp;&nbsp;&nbsp; $CL_{bar{X}} = \bar{\bar{X}}$
+&nbsp;&nbsp;&nbsp;&nbsp; $CL_{\bar{X}} = \bar{\bar{X}}$
   
 &nbsp;&nbsp;&nbsp;&nbsp; $UCL_{R} = D_{4}\bar{R}$  
   
@@ -96,6 +96,6 @@ Values where extracted from:
 
 ## TODO
 Allow the use of Western Electric rules.  
-See: ,<em>[ Western Electric Company, Statistical Quality Control Handbook., Indianapolis, Indiana: Western Electric Co](https://www.westernelectric.com/library#technical)</em>
+See: <em>[ Western Electric Company, Statistical Quality Control Handbook., Indianapolis, Indiana: Western Electric Co](https://www.westernelectric.com/library#technical)</em>
 
 Add np-chart, p-chart, c-chart and u-chart, EWMA-chart, CUSUM-chart, pareto-chart and multi-variate charts.

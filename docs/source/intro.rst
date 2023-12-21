@@ -147,7 +147,7 @@ Constants
 TODO
 ----
 
-| Allow the use of Western Electric rules.
+| implement Western Electric rules.
 | See: \ `Western Electric Company, Statistical Quality Control
   Handbook., Indianapolis, Indiana: Western Electric
   Co <https://www.westernelectric.com/library#technical>`__\
