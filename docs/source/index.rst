@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to spc_charts's documentation!
+Welcome to spc_charts's documentation
 ======================================
 
 .. toctree::
@@ -11,7 +11,6 @@ Welcome to spc_charts's documentation!
    :caption: Contents:
 
    intro
-   modules
    spc_charts
 
 Indices and tables

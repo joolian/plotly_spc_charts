@@ -1,10 +1,5 @@
-spc\_charts package
-===================
-
-Submodules
-----------
-
-spc\_charts.spc\_charts module
+﻿
+spc_charts
 ------------------------------
 
 .. automodule:: spc_charts.spc_charts
@@ -12,9 +7,4 @@ spc\_charts.spc\_charts module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
 
-.. automodule:: spc_charts
-   :members:
-   :undoc-members:

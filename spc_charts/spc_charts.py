@@ -445,42 +445,24 @@ class XbarR:
         self._r_title = r_title
         self._chart_width = chart_width
         self._chart_height = chart_height
-        path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
+        # path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
         # self._constants = Constants(path=Path('factor_values_for_shewart_charts.csv'))
-        self._constants = Constants()
-        """Instance variable for the constants object"""
-        self._n = None
-        """Number of values in each subgroup"""
-        self._x_center_line = None
-        """The values of the center line for the subgroup averages chart"""
-        self._x_sigma = None
-        """The value of sigma for the subgroup averages chart"""
-        self._x_upper_limit = None
-        """The upper limit for the subgroup averages chart"""
-        self._x_lower_limit = None
-        """The lower limit for the subgroup averages chart"""
-        self._r_center_line = None
-        """The center line for the subgroup range chart"""
-        self._r_upper_limit = None
-        """The upper limit for the subgroup range chart"""
-        self._r_lower_limit = None
-        """The lower limit for the subgroup range chart"""
-        self._fitted = False
-        """True the model has been fitted, False if it has not."""
-        # self._subgroup_ranges = None
-        self._r_values = None
-        """The range of each subgroup of the values to be plotted"""
-        # self._subgroup_means = None
-        self._x_values = None
-        """The means of each subgroup calculated by the predict method"""
-        self._labels = None
-        """The labels given to the subgroups by the user"""
-        self._r_in_limits = None
-        """Whether each subgroup range is within the range chart control limits"""
-        self._x_in_limits = None
-        """Whether each subgroup mean is within the mean chart control limits"""
-        self._chart = None
-        """True is the chart has been plotted"""
+        self._constants = Constants()  # Instance variable for the constants object
+        self._n = None  # Number of values in each subgroup
+        self._x_center_line = None  # The values of the center line for the subgroup averages chart
+        self._x_sigma = None  # The value of sigma for the subgroup averages chart
+        self._x_upper_limit = None  # The upper limit for the subgroup averages chart
+        self._x_lower_limit = None  # The lower limit for the subgroup averages chart
+        self._r_center_line = None  # The center line for the subgroup range chart
+        self._r_upper_limit = None  # The upper limit for the subgroup range chart
+        self._r_lower_limit = None  # The lower limit for the subgroup range chart
+        self._fitted = False  # True the model has been fitted, False if it has not
+        self._r_values = None  # The range of each subgroup of the values to be plotted
+        self._x_values = None  # The means of each subgroup calculated by the predict method
+        self._labels = None  # The labels given to the subgroups by the user
+        self._r_in_limits = None  # Whether each subgroup range is within the range chart control limits
+        self._x_in_limits = None  # Whether each subgroup mean is within the mean chart control limits
+        self._chart = None # True is the chart has been plotted
 
     @staticmethod
     def _subgroup_range_mean(values):
