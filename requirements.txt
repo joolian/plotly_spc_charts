@@ -5,3 +5,4 @@ importlib_resources
 sphinx_rtd_theme
 kaleido
 openpyxl
+autoclasstoc
