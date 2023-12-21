@@ -3,15 +3,15 @@
 [![Documentation Status](https://readthedocs.org/projects/plotly-spc-charts/badge/?version=latest)](https://plotly-spc-charts.readthedocs.io/en/latest/?badge=latest)
 
 ## Shewart Average and Range Chart
-Creates an interactive Average and Range chart using Plotly.  
-Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
-Each subgroup can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
-The control limits can be calculated from a set of data and the chart plotted.  
-New data can be plotted using the calculated control limits.  
-The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
-The control limits can be saved to JSON, and  loaded from JSON.  
-The control limits can be set and retrieved as a dictionary.  
-The subgroup labels, averages, ranges and status (in or out of control) can be retrieved as a pandas Dataframe.
+* Creates an interactive Average and Range chart using Plotly.  
+* Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  
+* Each subgroup can be labelled and the labels will be shown on the chart when the mouse pointer is near the marker.  
+* The control limits can be calculated from a set of data and the chart plotted.  
+* New data can be plotted using the calculated control limits.  
+* The chart can be saved as PNG, JPEG, WebP, SVG and PDF.  
+* The control limits can be saved to JSON, and  loaded from JSON.  
+* The control limits can be set and retrieved as a dictionary.  
+* The subgroup labels, averages, ranges and status (in or out of control) can be retrieved as a pandas Dataframe.
 
 For an example of usage see: [XbarR_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/XbarR/XbarR_example.ipynb)
 
@@ -21,17 +21,17 @@ For an example of usage see: [XbarR_example.ipynb](https://github.com/joolian/pl
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, p. 44.</em>  
 
-$UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
+&nbsp;&nbsp;&nbsp;&nbsp;$UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
   
-$LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
+&nbsp;&nbsp;&nbsp;&nbsp;$LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
 
-$CL_{bar{X}} = \bar{\bar{X}}$
+&nbsp;&nbsp;&nbsp;&nbsp;$CL_{bar{X}} = \bar{\bar{X}}$
   
-$UCL_{R} = D_{4}\bar{R}$  
+&nbsp;&nbsp;&nbsp;&nbsp;$UCL_{R} = D_{4}\bar{R}$  
   
-$CL_{R} = \bar{R}$  
+&nbsp;&nbsp;&nbsp;&nbsp;$CL_{R} = \bar{R}$  
   
-$LCL_{R} = D_{3}\bar{R}$
+&nbsp;&nbsp;&nbsp;&nbsp;$LCL_{R} = D_{3}\bar{R}$
 
 Where:
 
@@ -59,7 +59,7 @@ For an example of usage see: [IndividualMR_example.ipynb](https://github.com/joo
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
 
-$UNPL_{X} = \bar{X} + \displaystylr\frac{3\bar{mR}}{d_{2}}$
+$UNPL_{X} = \bar{X} + \displaystyle\frac{3\bar{mR}}{d_{2}}$
 
 $LNPL_{X} = \bar{\bar{X}} - \displaystyle\frac{3\bar{mR}}{d_{2}}$
 
