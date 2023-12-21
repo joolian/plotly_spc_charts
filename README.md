@@ -59,9 +59,9 @@ For an example of usage see: [IndividualMR_example.ipynb](https://github.com/joo
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
 
-$UNPL_{X} = \bar{X} + \Large \frac{3\bar{mR}}{d_{2}}$
+$UNPL_{X} = \bar{X} + \displaystylr\frac{3\bar{mR}}{d_{2}}$
 
-$LNPL_{X} = \bar{\bar{X}} - \Large \frac{3\bar{mR}}{d_{2}}$
+$LNPL_{X} = \bar{\bar{X}} - \displaystyle\frac{3\bar{mR}}{d_{2}}$
 
 $CL_{X} = \bar{X}$
 
