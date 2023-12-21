@@ -21,7 +21,7 @@ For an example of usage see: [XbarR_example.ipynb](https://github.com/joolian/pl
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, p. 44.</em>  
 
-&nbsp;&nbsp;&nbsp;&nbsp;$UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
+&nbsp;&nbsp;&nbsp;&nbsp; $UCL_{\bar{X}} = \bar{\bar{X}} + A_{2}\bar{R}$  
   
 &nbsp;&nbsp;&nbsp;&nbsp;$LCL_{\bar{X}} = \bar{\bar{X}} - A_{2}\bar{R}$  
 
