@@ -130,21 +130,17 @@ class TestXbarR:
         fitted_chart.params = expected_params
         assert fitted_chart.params == expected_params
 
-    def test_plot_error(self, expected_params):
-        chart = XbarR()
-        with pytest.raises(ValueError, match='Error: there is no data to plot'):
-            chart.plot()
-
     def test_save_chart(self, fitted_chart, tmp_path):
         file_path = tmp_path / 'chart.png'
-        fitted_chart.plot()
+        # fitted_chart.plot()
         fitted_chart.save_chart(file_path)
         assert file_path.exists()
 
     def test_save_chart_error(self, fitted_chart, tmp_path):
+        chart = XbarR()
         file_path = tmp_path / 'IndividualMR_chart.png'
         with pytest.raises(Exception, match='Error: the chart must be plotted before it can be saved'):
-            fitted_chart.save_chart(file_path)
+            chart.save_chart(file_path)
 
 
 class TestIndividualMR:
@@ -239,9 +235,6 @@ class TestIndividualMR:
         labels = np.array(['A', 'B'])
         with pytest.raises(ValueError, match='The number of samples per subgroup must be one.'):
             fitted_chart.predict(values=values, labels=labels)
-
-    def test_plot(self, fitted_chart):
-        fitted_chart.plot()
 
 
 class TestRun:

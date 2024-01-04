@@ -1,19 +1,13 @@
 """Plotly charts for Statistical Process control"""
 
-"""
-TODO:
-look into returning a chart class as a property so that users can manipulate it directly
-look into allowing a chart object to be passed to the control object so that users can create their own chart objects
-look into returning the chart object as a figure widget for use in a notebook
-"""
-
 import json
+import copy
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from importlib_resources import files
+from plotly.subplots import make_subplots
 
 
 def array_missing_values(values):
@@ -87,7 +81,7 @@ class RunChart:
         """
         self._x_values = np.array(x_values)
         self._labels = np.array(labels)
-        self._y = np.arange(1, self._x_values.shape[0] + 1, 1)
+        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
         self._x_center = x_center
         self._title = title
         self._x_title = x_title
@@ -112,12 +106,12 @@ class RunChart:
 
     def _draw(self):
         """Draws the chart and shows it."""
-        center_line_x = [min(self._y), max(self._y)]
+        center_line_x = [min(self._x), max(self._x)]
         center_line_y = [self._x_center] * 2
         self._fig = go.Figure()
         self._fig.add_trace(
             go.Scatter(
-                x=self._y,
+                x=self._x,
                 y=self._x_values,
                 name='',
                 mode='markers+lines',
@@ -155,7 +149,6 @@ class RunChart:
         )
         self._fig.update_xaxes(showgrid=False)
         self._fig.update_yaxes(title_text=self._x_title, showgrid=False)
-        self._fig.show()
 
     def save(self, path):
         """
@@ -173,6 +166,7 @@ class XRChart:
     Methods:
         draw()
         save()
+        update()
     """
 
     def __init__(self, x_values, labels, x_center, x_status, x_upper_limit, x_lower_limit, r_values, r_status,
@@ -197,7 +191,7 @@ class XRChart:
         """
         self._x_values = x_values
         self._labels = labels
-        self._y = np.arange(1, self._x_values.shape[0] + 1, 1)
+        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
         self._x_center = x_center
         self._x_status = x_status
         self._r_status = r_status
@@ -215,7 +209,8 @@ class XRChart:
         self._show_r_lower_limit = show_r_lower_limit
 
         self._fig = make_subplots(rows=2, cols=1, shared_xaxes=True)
-        self.draw()
+        self._fig_widget = None
+        self._draw()
 
     @staticmethod
     def _marker_colors(status):
@@ -228,7 +223,7 @@ class XRChart:
 
         :param limit: the control limit
         """
-        control_limit_x = [min(self._y), max(self._y)]
+        control_limit_x = [min(self._x), max(self._x)]
         control_limit_y = [limit] * 2
         return go.Scatter(
             x=control_limit_x,
@@ -250,7 +245,7 @@ class XRChart:
 
         :param value: the value of the center line
         """
-        control_limit_x = [min(self._y), max(self._y)]
+        control_limit_x = [min(self._x), max(self._x)]
         control_limit_y = [value] * 2
         return go.Scatter(
             x=control_limit_x,
@@ -271,7 +266,7 @@ class XRChart:
         :param marker_labels: the labels for the values
         """
         return go.Scatter(
-            x=self._y,
+            x=self._x,
             y=values,
             name='',
             mode='markers+lines',
@@ -300,7 +295,7 @@ class XRChart:
             )
         )
 
-    def draw(self):
+    def _draw(self):
         """Creates a plotly chart and shows it."""
         self._fig.add_trace(
             self._value_trace(
@@ -323,17 +318,15 @@ class XRChart:
             row=2, col=1
         )
         self._fig.add_trace(self._control_limit_trace(self._r_upper_limit), row=2, col=1)
+        self._fig.add_trace(self._mean_trace(self._r_center, ), row=2, col=1)
         if self._show_r_lower_limit:
             self._fig.add_trace(self._control_limit_trace(self._r_lower_limit), row=2, col=1)
-        self._fig.add_trace(self._mean_trace(self._r_center, ), row=2, col=1)
 
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width,
                                 height=self._height)
         self._fig.update_xaxes(showgrid=False, row=1, col=1)
         self._fig.update_yaxes(title_text=self._x_title, showgrid=False, row=1, col=1)
         self._fig.update_yaxes(title_text=self._r_title, showgrid=False, row=2, col=1)
-
-        self._fig.show()
 
     def save(self, path):
         """
@@ -342,6 +335,88 @@ class XRChart:
         :param path: Path and filename to save the chart to.
         """
         self._fig.write_image(path)
+
+    @property
+    def figure(self):
+        """Returns the chart as a Figure object"""
+        return self._fig
+
+    @property
+    def widget(self):
+        """
+        Returns the chart as a go.FigureWidget object. This is used to create
+        charts in Jupyter Notebooks where it is necessary to update the chart's
+        data after the chart has been displayed.
+
+        :return: Plotly go.FigureWidget
+        """
+        self._fig_widget = go.FigureWidget(self._fig)
+        return self._fig_widget
+
+    def update(self, x_values, labels, x_status, x_center, x_upper_limit, x_lower_limit, r_values, r_status, r_upper_limit, r_lower_limit, r_center):
+        """
+        If the chart exists, it is updated with new values for the X and R data.
+
+        :param x_values: the values to be plotted on the X chart
+        :param labels: the labels for the values plotted on the X and R charts
+        :param x_status: Boolean array: whether the values in x_values are in control.
+        :param r_values: the values to be plotted on the R chart
+        :param r_status: Boolean array: whether the values in x_values are in control.
+        """
+        self._x_values = x_values
+        self._labels = labels
+        self._x_center = x_center
+        self._x_status = x_status
+        self._x_upper_limit = x_upper_limit
+        self._x_lower_limit = x_lower_limit
+        self._r_values = r_values
+        self._r_status = r_status
+        self._r_upper_limit = r_upper_limit
+        self._r_lower_limit = r_lower_limit
+        self._r_center = r_center
+        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
+        x_marker_colors = self._marker_colors(self._x_status)
+        r_marker_colors = self._marker_colors(self._r_status)
+        x_marker_labels = self._marker_labels(self._x_title, self._x_values)
+        r_marker_labels = self._marker_labels(self._r_title, self._r_values)
+        control_limit_x = [min(self._x), max(self._x)]
+        for chart in [self._fig, self._fig_widget]:
+            if chart is None:
+                continue
+            chart.data[0]['y'] = self._x_values
+            chart.data[0]['x'] = self._x
+            chart.data[0]['marker']['color'] = x_marker_colors
+            chart.data[0]['customdata'] = x_marker_labels
+
+            chart.data[1]['x'] = control_limit_x
+            chart.data[1]['y'] = [self._x_lower_limit] * 2
+            chart.data[1]['customdata'] = [self._x_lower_limit] * 2
+
+            chart.data[2]['x'] = control_limit_x
+            chart.data[2]['y'] = [self._x_upper_limit] * 2
+            chart.data[2]['customdata'] = [self._x_upper_limit] * 2
+
+            chart.data[3]['x'] = control_limit_x
+            chart.data[3]['y'] = [self._x_center] * 2
+            chart.data[3]['customdata'] = [self._x_center] * 2
+
+            chart.data[4]['y'] = self._r_values
+            chart.data[4]['x'] = self._x
+            chart.data[4]['marker']['color'] = r_marker_colors
+            chart.data[4]['customdata'] = r_marker_labels
+
+            chart.data[5]['x'] = control_limit_x
+            chart.data[5]['y'] = [self._r_upper_limit] * 2
+            chart.data[5]['customdata'] = [self._r_upper_limit] * 2
+
+            chart.data[6]['x'] = control_limit_x
+            chart.data[6]['y'] = [self._r_center] * 2
+            chart.data[6]['customdata'] = [self._r_center] * 2
+
+            if self._show_r_lower_limit:
+                chart.data[7]['x'] = control_limit_x
+                chart.data[7]['y'] = [self._r_lower_limit] * 2
+                chart.data[7]['customdata'] = [self._r_lower_limit] * 2
 
 
 class Run:
@@ -445,8 +520,6 @@ class XbarR:
         self._r_title = r_title
         self._chart_width = chart_width
         self._chart_height = chart_height
-        # path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
-        # self._constants = Constants(path=Path('factor_values_for_shewart_charts.csv'))
         self._constants = Constants()  # Instance variable for the constants object
         self._n = None  # Number of values in each subgroup
         self._x_center_line = None  # The values of the center line for the subgroup averages chart
@@ -462,7 +535,7 @@ class XbarR:
         self._labels = None  # The labels given to the subgroups by the user
         self._r_in_limits = None  # Whether each subgroup range is within the range chart control limits
         self._x_in_limits = None  # Whether each subgroup mean is within the mean chart control limits
-        self._chart = None # True is the chart has been plotted
+        self._chart = None  # True is the chart has been plotted
 
     @staticmethod
     def _subgroup_range_mean(values):
@@ -532,8 +605,12 @@ class XbarR:
         self._x_values, self._r_values = self._subgroup_range_mean(values)
         self._r_in_limits = self._in_control(self._r_values, self._r_upper_limit, self._r_lower_limit)
         self._x_in_limits = self._in_control(self._x_values, self._x_upper_limit, self._x_lower_limit)
+        if self._chart is None:
+            self._create_chart()
+        else:
+            self._update_chart()
 
-    def plot(self):
+    def _create_chart(self):
         """
         Plots the mean and range values on Plotly chart.
 
@@ -554,7 +631,6 @@ class XbarR:
             r_lower_limit=self._r_lower_limit,
             r_center=self._r_center_line,
             title=self._title,
-            # x_title='\u0078\u0304', # X with bar
             x_title=self._x_title,
             r_title=self._r_title,
             width=self._chart_width,
@@ -563,7 +639,23 @@ class XbarR:
         )
 
     def _update_chart(self):
-        pass
+        self._chart.update(
+            x_values=self._x_values,
+            labels=self._labels,
+            x_status=self._x_in_limits,
+            x_center=self._x_center_line,
+            x_upper_limit=self._x_upper_limit,
+            x_lower_limit=self._x_lower_limit,
+            r_values=self._r_values,
+            r_status=self._r_in_limits,
+            r_upper_limit=self._r_upper_limit,
+            r_lower_limit=self._r_lower_limit,
+            r_center=self._r_center_line,
+        )
+
+    @property
+    def chart(self):
+        return self._chart
 
     def save_chart(self, path):
         """
@@ -708,7 +800,6 @@ class IndividualMR(XbarR):
     Methods:
         fit()
         predict()
-        plot()
         save()
         load()
         save_chart()
@@ -723,7 +814,8 @@ class IndividualMR(XbarR):
 
     def fit(self, values, labels):
         """
-        Calculates the control limits and center lines for the mean and range charts.
+        Calculates the control limits and center lines for the average and range charts.
+        It then runs the predict method and
 
         :param values: The values to be used to calculate the control limits. The subgroup size must be at least 2.
         :type values: list, tuple or array
@@ -776,6 +868,10 @@ class IndividualMR(XbarR):
         self._r_values = np.concatenate(([np.NAN], self.moving_ranges(self._x_values)))
         self._x_in_limits = self._in_control(self._x_values, self._x_upper_limit, self._x_lower_limit)
         self._r_in_limits = self._in_control(self._r_values, self._r_upper_limit, self._r_lower_limit)
+        if self._chart is None:
+            self._create_chart()
+        else:
+            self._update_chart()
 
     @staticmethod
     def moving_ranges(values):
