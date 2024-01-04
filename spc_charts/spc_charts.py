@@ -1,7 +1,6 @@
 """Plotly charts for Statistical Process control"""
 
 import json
-import copy
 
 import numpy as np
 import pandas as pd
@@ -190,8 +189,7 @@ class XRChart:
         :param height: the height of the chart in pixels
         """
         self._x_values = x_values
-        self._labels = labels
-        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
+        self._x = labels
         self._x_center = x_center
         self._x_status = x_status
         self._r_status = r_status
@@ -210,51 +208,52 @@ class XRChart:
 
         self._fig = make_subplots(rows=2, cols=1, shared_xaxes=True)
         self._fig_widget = None
-        self._draw()
+        self._create()
 
     @staticmethod
     def _marker_colors(status):
         """ Sets the color of the markers based on whether they are in or out of control"""
         return np.where(status, 'green', 'red')
 
-    def _control_limit_trace(self, limit):
+    def _marker_labels(self, axis_title, values):
         """
-        Creates a trace for control limits
+        Creates the hover text for each marker.
 
-        :param limit: the control limit
+        :param axis_title: the title of the y-axis
+        :param values: the values for each marker
         """
-        control_limit_x = [min(self._x), max(self._x)]
-        control_limit_y = [limit] * 2
-        return go.Scatter(
-            x=control_limit_x,
-            y=control_limit_y,
-            customdata=[limit] * 2,
-            hovertemplate='<b>%{customdata}',
-            name='',
-            mode='lines',
-            line=dict(
-                color='black',
-                dash='dash',
-                width=1
+        return list(
+            zip(
+                self._x,
+                [f'{axis_title}: ' + str(value) for value in values]
             )
         )
 
-    def _mean_trace(self, value):
-        """
-        Creates a trace for center lines.
+    def _limit_labels(self, value, name):
+        """ Creates the text for the hover labels for the center or control limit lines."""
+        return np.repeat(f'{name}: {value}', self._x.size)
 
-        :param value: the value of the center line
+    def _limit_trace(self, limit, name, kind):
         """
-        control_limit_x = [min(self._x), max(self._x)]
-        control_limit_y = [value] * 2
+        Creates a trace for ceneter line or control limits
+
+        :param limit: the control limit
+        :param name: the name of the trace to be used in hover text
+        :param kind: 'center' for a center line or 'limit' for a control limit
+        """
+        if kind == 'center':
+            line = dict(color='black', width=1)
+        else:
+            line = dict(color='black', dash='dash', width=1)
         return go.Scatter(
-            x=control_limit_x,
-            y=control_limit_y,
-            mode='lines',
-            line=dict(color='black', width=1),
+            x=self._x,
+            y=np.repeat(limit, self._x.size),
+            # customdata=np.repeat(f'{name}: {limit}', self._x.size),
+            customdata=self._limit_labels(limit, name),
+            hovertemplate='<b>%{customdata}</b>',
             name='',
-            customdata=[value] * 2,
-            hovertemplate='<b>%{customdata}'
+            mode='lines',
+            line=line
         )
 
     def _value_trace(self, values, status, marker_labels):
@@ -262,7 +261,7 @@ class XRChart:
         Creates a trace to plot the values.
 
         :param values: the values to plot
-        :param status: whether the vales are in or out of control
+        :param status: whether the values are in or out of control
         :param marker_labels: the labels for the values
         """
         return go.Scatter(
@@ -281,21 +280,7 @@ class XRChart:
             showlegend=False
         )
 
-    def _marker_labels(self, axis_title, values):
-        """
-        Creates the hover text for each marker.
-
-        :param axis_title: the title of the y-axis
-        :param values: the values for each marker
-        """
-        return list(
-            zip(
-                self._labels,
-                [f'{axis_title}: ' + str(value) for value in values]
-            )
-        )
-
-    def _draw(self):
+    def _create(self):
         """Creates a plotly chart and shows it."""
         self._fig.add_trace(
             self._value_trace(
@@ -305,9 +290,9 @@ class XRChart:
             ),
             row=1, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._x_lower_limit), row=1, col=1)
-        self._fig.add_trace(self._control_limit_trace(self._x_upper_limit), row=1, col=1)
-        self._fig.add_trace(self._mean_trace(self._x_center), row=1, col=1)
+        self._fig.add_trace(self._limit_trace(self._x_upper_limit, 'UCL', 'limit'), row=1, col=1)
+        self._fig.add_trace(self._limit_trace(self._x_center, 'CL', 'center'), row=1, col=1)
+        self._fig.add_trace(self._limit_trace(self._x_lower_limit, 'LCL', 'limit'), row=1, col=1)
 
         self._fig.add_trace(
             self._value_trace(
@@ -317,10 +302,10 @@ class XRChart:
             ),
             row=2, col=1
         )
-        self._fig.add_trace(self._control_limit_trace(self._r_upper_limit), row=2, col=1)
-        self._fig.add_trace(self._mean_trace(self._r_center, ), row=2, col=1)
+        self._fig.add_trace(self._limit_trace(self._r_upper_limit, 'UCL', 'limit'), row=2, col=1)
+        self._fig.add_trace(self._limit_trace(self._r_center, 'CL', 'center'), row=2, col=1)
         if self._show_r_lower_limit:
-            self._fig.add_trace(self._control_limit_trace(self._r_lower_limit), row=2, col=1)
+            self._fig.add_trace(self._limit_trace(self._r_lower_limit, 'LCL', 'limit'), row=2, col=1)
 
         self._fig.update_layout(title=self._title, template='simple_white', showlegend=False, width=self._width,
                                 height=self._height)
@@ -359,12 +344,18 @@ class XRChart:
 
         :param x_values: the values to be plotted on the X chart
         :param labels: the labels for the values plotted on the X and R charts
-        :param x_status: Boolean array: whether the values in x_values are in control.
+        :param x_status: Boolean array: whether the values of the X chart are in control.
+        :param x_center: the values of the center line for the X chart
+        :param x_upper_limit: the value of the upper control limit for the X chart
+        :param x_lower_limit: the value of the lower control limit for the X chart
         :param r_values: the values to be plotted on the R chart
-        :param r_status: Boolean array: whether the values in x_values are in control.
+        :param r_status: Boolean array: whether the values in of the R chart are in control.
+        :param r_upper_limit: the value of the upper control limit for the R chart
+        :param r_lower_limit: the value of the lower control limit for the R chart
+        :param r_center: the value of th center line for th R chart
         """
         self._x_values = x_values
-        self._labels = labels
+        self._x = labels
         self._x_center = x_center
         self._x_status = x_status
         self._x_upper_limit = x_upper_limit
@@ -374,49 +365,45 @@ class XRChart:
         self._r_upper_limit = r_upper_limit
         self._r_lower_limit = r_lower_limit
         self._r_center = r_center
-        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
-        x_marker_colors = self._marker_colors(self._x_status)
-        r_marker_colors = self._marker_colors(self._r_status)
-        x_marker_labels = self._marker_labels(self._x_title, self._x_values)
-        r_marker_labels = self._marker_labels(self._r_title, self._r_values)
-        control_limit_x = [min(self._x), max(self._x)]
+
         for chart in [self._fig, self._fig_widget]:
             if chart is None:
                 continue
+            # x chart values
             chart.data[0]['y'] = self._x_values
             chart.data[0]['x'] = self._x
-            chart.data[0]['marker']['color'] = x_marker_colors
-            chart.data[0]['customdata'] = x_marker_labels
-
-            chart.data[1]['x'] = control_limit_x
-            chart.data[1]['y'] = [self._x_lower_limit] * 2
-            chart.data[1]['customdata'] = [self._x_lower_limit] * 2
-
-            chart.data[2]['x'] = control_limit_x
-            chart.data[2]['y'] = [self._x_upper_limit] * 2
-            chart.data[2]['customdata'] = [self._x_upper_limit] * 2
-
-            chart.data[3]['x'] = control_limit_x
-            chart.data[3]['y'] = [self._x_center] * 2
-            chart.data[3]['customdata'] = [self._x_center] * 2
-
-            chart.data[4]['y'] = self._r_values
+            chart.data[0]['marker']['color'] = self._marker_colors(self._x_status)
+            chart.data[0]['customdata'] = self._marker_labels(self._x_title, self._x_values)
+            # x chart upper limit
+            chart.data[1]['x'] = self._x
+            chart.data[1]['y'] = np.repeat(self._x_upper_limit, self._x.size)
+            chart.data[1]['customdata'] = self._limit_labels(self._x_upper_limit, 'UCL')
+            # x chart center line
+            chart.data[2]['x'] = self._x
+            chart.data[2]['y'] = np.repeat(self._x_center, self._x.size)
+            chart.data[2]['customdata'] = self._limit_labels(self._x_center, 'CL')
+            # x chart lower limit
+            chart.data[3]['x'] = self._x
+            chart.data[3]['y'] = np.repeat(self._x_lower_limit, self._x.size)
+            chart.data[3]['customdata'] = self._limit_labels(self._x_lower_limit, 'LCL')
+            # r chart values
             chart.data[4]['x'] = self._x
-            chart.data[4]['marker']['color'] = r_marker_colors
-            chart.data[4]['customdata'] = r_marker_labels
-
-            chart.data[5]['x'] = control_limit_x
-            chart.data[5]['y'] = [self._r_upper_limit] * 2
-            chart.data[5]['customdata'] = [self._r_upper_limit] * 2
-
-            chart.data[6]['x'] = control_limit_x
-            chart.data[6]['y'] = [self._r_center] * 2
-            chart.data[6]['customdata'] = [self._r_center] * 2
-
+            chart.data[4]['y'] = self._r_values
+            chart.data[4]['marker']['color'] = self._marker_colors(self._r_status)
+            chart.data[4]['customdata'] = self._marker_labels(self._r_title, self._r_values)
+            # r chart upper limit
+            chart.data[5]['x'] = self._x
+            chart.data[5]['y'] = np.repeat(self._r_upper_limit, self._x.size)
+            chart.data[5]['customdata'] = self._limit_labels(self._r_upper_limit, 'UCL')
+            # r chart center line
+            chart.data[6]['x'] = self._x
+            chart.data[6]['y'] = np.repeat(self._r_center, self._x.size)
+            chart.data[6]['customdata'] = self._limit_labels(self._r_center, 'CL')
+            # r chart lower limit
             if self._show_r_lower_limit:
-                chart.data[7]['x'] = control_limit_x
-                chart.data[7]['y'] = [self._r_lower_limit] * 2
-                chart.data[7]['customdata'] = [self._r_lower_limit] * 2
+                chart.data[7]['x'] = self._x
+                chart.data[7]['y'] = np.repeat(self._r_lower_limit, self._x.size)
+                chart.data[7]['customdata'] = self._limit_labels(self._r_lower_limit, 'LCL')
 
 
 class Run:
@@ -482,7 +469,8 @@ class Run:
         """
         Saves an image of the chart to a file.
 
-        :param path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
+        :param path: The full path and filename to save to. The file type is automatically determined
+        by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         self._chart.save(path)
 
@@ -592,7 +580,8 @@ class XbarR:
         :type labels: list, tuple or array of strings
         :raises: Exception: if the control limits have not been calculated.
         :raises: ValueError: if there are missing values in values.
-        :raises: ValueError: if the number of values in the subgroups used to calculate the control limits is different to the number of subgroups in values.
+        :raises: ValueError: if the number of values in the subgroups used to calculate the control limits
+         is different to the number of subgroups in values.
         """
         if not self._fitted:
             raise Exception('Error: chart has not been fitted')
@@ -661,7 +650,8 @@ class XbarR:
         """
         Saves an image of the chart to a file.
 
-        :param path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
+        :param path: The full path and filename to save to. The file type is automatically
+         determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         if self._chart:
             self._chart.save(path)
@@ -743,7 +733,7 @@ class XbarR:
 
         * n : the number of values in each subgroup
         * x_upper_limit: the upper limit for the X chart
-        * x_lower_limit': the lower limit for the X chart
+        * x_lower_limit: the lower limit for the X chart
         * x_center_line: the center line of the X chart
         * r_upper_limit: the upper limit of the R chart
         * r_lower_limit: the lower limit of the R chart
@@ -752,7 +742,6 @@ class XbarR:
         * x_title: the title for the y-axis of the X chart
         * r_title: the title for the y-axis of the R chart
 
-        :param params: dictionary of the parameters
         :returns: dictionary
         """
         return self._params_to_dict()
