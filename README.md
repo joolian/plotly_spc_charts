@@ -98,7 +98,7 @@ For an example of usage see: [Run_example.ipynb](https://github.com/joolian/plot
 ![chart_image.svg](https://github.com/joolian/plotly_spc_charts/blob/main/docs/images/Run.svg)
 
 ## Constants
-Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](https://github.com/joolian/plotly_spc_charts/blob/main/spc_charts/factor_values_for_shewart_charts.csv).  
+Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](https://github.com/joolian/plotly_spc_charts/blob/main/plotly_spc_charts/factor_values_for_shewart_charts.csv).  
 Values where extracted from: 
 <em>[A Note on the Factor Values of Three Common Shewhart Variables Control Charts. Henry H. Bi. 2015. Communications in Statistics - Theory and Methods (0361-0926). 44(13): 2655-2673. DOI:10.1080/03610926.2014.968732](https://www.researchgate.net/publication/275236350_A_Note_on_the_Factor_Values_of_Three_Common_Shewhart_Variables_Control_Charts_Henry_H_Bi_2015_Communications_in_Statistics_-_Theory_and_Methods_0361-0926_4413_2655-2673_httpdxdoiorg1010800361092620149)</em>
 
