@@ -23,7 +23,7 @@ Creates an interactive Average and Range chart using Plotly.
 
 For an example of usage see: [XbarR_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/XbarR/XbarR_example.ipynb)
 
-![XbarR_chart.svg](https://github.com/joolian/plotly_spc_charts/blob/package/examples/XbarR/chart_image.svg)
+![XbarR_chart.svg](https://github.com/joolian/plotly_spc_charts/blob/main/docs/images/XbarR.svg)
 
 
 ### Calculation of control limits
@@ -62,7 +62,7 @@ Creates an interactive individual Moving Range chart using Plotly.
 
 For an example of usage see: [IndividualMR_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/IndividualMR_example.ipynb)
 
-![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/main/examples/IndividualMR/chart_image.png)
+![chart_image.png](https://github.com/joolian/plotly_spc_charts/blob/main/docs/images/IndividualMR.svg)
 
 ### Calculation of control limits
 Calculations use the method given in: <em>Wheeler, D.J. and Chambers, D.S. (1992) Understanding statistical process control. SPC Press, Incorporated, pp. 48-49.</em>  
@@ -95,7 +95,7 @@ Creates an interactive run chart using Plotly.
 
 For an example of usage see: [Run_example.ipynb](https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/Run_example.ipynb)  
 
-![chart_image.svg](https://github.com/joolian/plotly_spc_charts/blob/main/examples/Run/chart_image.svg)
+![chart_image.svg](https://github.com/joolian/plotly_spc_charts/blob/main/docs/images/Run.svg)
 
 ## Constants
 Constants for the computing of control limits are listed in [factor_values_for_shewart_charts.csv](https://github.com/joolian/plotly_spc_charts/blob/main/spc_charts/factor_values_for_shewart_charts.csv).  
