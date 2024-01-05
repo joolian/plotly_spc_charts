@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from spc_charts.spc_charts import Constants, XbarR, IndividualMR, Run
+from plotly_spc_charts.charts import Constants, XbarR, IndividualMR, Run
 
 
 class TestConstants:
@@ -255,19 +255,21 @@ class TestRun:
 
     @pytest.fixture
     def fitted_chart(self, values, labels):
-        return Run(values=values, labels=labels, title='Run chart', x_title='Values', chart_height=500, chart_width=700)
+        chart = Run(title='Run chart', x_title='Values', chart_height=500, chart_width=700)
+        chart.fit(values=values, labels=labels)
+        return chart
 
     def test_ndim_error(self):
         values = np.array([[1, 2, 3], [4, 5, 6]])
         labels = np.array(['A', 'B'])
+        chart = Run()
         with pytest.raises(ValueError, match='Values has more than one column.'):
-            Run(values=values, labels=labels)
+            chart.fit(values=values, labels=labels)
 
     def test_centre_line(self, fitted_chart, values):
         assert fitted_chart.centre_line == np.median(values)
 
     def test_save_chart(self, fitted_chart, tmp_path):
         file_path = tmp_path / 'run_chart.png'
-        fitted_chart.plot()
         fitted_chart.save_chart(file_path)
         assert file_path.exists()

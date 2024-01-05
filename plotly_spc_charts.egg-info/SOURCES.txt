@@ -1,0 +1,13 @@
+LICENSE
+MANIFEST.in
+README.md
+README.rst
+pyproject.toml
+plotly_spc_charts/__init__.py
+plotly_spc_charts/charts.py
+plotly_spc_charts/factor_values_for_shewart_charts.csv
+plotly_spc_charts.egg-info/PKG-INFO
+plotly_spc_charts.egg-info/SOURCES.txt
+plotly_spc_charts.egg-info/dependency_links.txt
+plotly_spc_charts.egg-info/requires.txt
+plotly_spc_charts.egg-info/top_level.txt

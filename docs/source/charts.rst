@@ -1,8 +1,8 @@
 ﻿
-spc_charts
+charts
 ------------------------------
 
-.. automodule:: spc_charts.spc_charts
+.. automodule:: plotly_spc_charts.charts
    :members:
    :undoc-members:
    :show-inheritance:

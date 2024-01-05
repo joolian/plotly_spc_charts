@@ -30,7 +30,7 @@ class Constants:
     """
 
     def __init__(self):
-        self._path = files('spc_charts').joinpath('factor_values_for_shewart_charts.csv')
+        self._path = files('plotly_spc_charts').joinpath('factor_values_for_shewart_charts.csv')
         self._factors = None
         self._load()
 
@@ -66,6 +66,11 @@ class RunChart:
 
     Methods:
         save()
+        update()
+
+    Properties:
+        figure
+        widget
     """
 
     def __init__(self, x_values, labels, x_center, title, x_title, width, height):
@@ -79,15 +84,15 @@ class RunChart:
         :param height: The height of the chart in pixels
         """
         self._x_values = np.array(x_values)
-        self._labels = np.array(labels)
-        self._x = np.arange(1, self._x_values.shape[0] + 1, 1)
+        self._x = np.array(labels)
         self._x_center = x_center
         self._title = title
         self._x_title = x_title
         self._width = width
         self._height = height
         self._fig = None
-        self._draw()
+        self._fig_widget = None
+        self._create()
 
     def _marker_labels(self, axis_title, values):
         """
@@ -98,15 +103,25 @@ class RunChart:
         """
         return list(
             zip(
-                self._labels,
+                self._x,
                 [f'{axis_title}: ' + str(value) for value in values]
             )
         )
 
-    def _draw(self):
-        """Draws the chart and shows it."""
-        center_line_x = [min(self._x), max(self._x)]
-        center_line_y = [self._x_center] * 2
+    def _limit_labels(self, value, name):
+        """
+        Creates the text for the hover labels for the center or control limit lines.
+
+        :param value: the value of the center line or control limit: this will be displayed in the hover
+        text
+        :param name: the name to give the center line or control limit: this will be
+        displayed in the hover text
+        :returns: the hover text for each data point
+        """
+        return np.repeat(f'{name}: {value}', self._x.size)
+
+    def _create(self):
+        """Creates the chart as a go.Figure object"""
         self._fig = go.Figure()
         self._fig.add_trace(
             go.Scatter(
@@ -126,10 +141,10 @@ class RunChart:
         )
         self._fig.add_trace(
             go.Scatter(
-                x=center_line_x,
-                y=center_line_y,
+                x=self._x,
+                y=np.repeat(self._x_center, self._x.size),
                 mode='lines',
-                customdata=[f'Median: {self._x_center}'] * 2,
+                customdata=np.repeat(f'Median: {self._x_center}', self._x.size),
                 hovertemplate='<b>%{customdata}',
                 line=dict(
                     color='black',
@@ -149,6 +164,23 @@ class RunChart:
         self._fig.update_xaxes(showgrid=False)
         self._fig.update_yaxes(title_text=self._x_title, showgrid=False)
 
+    @property
+    def figure(self):
+        """Returns the chart as a go.Figure object"""
+        return self._fig
+
+    @property
+    def widget(self):
+        """
+        Returns the chart as a go.FigureWidget object. This is used to create
+        charts in Jupyter Notebooks where it is necessary to update the chart's
+        data after the chart has been displayed.
+
+        :return: Plotly go.FigureWidget
+        """
+        self._fig_widget = go.FigureWidget(self._fig)
+        return self._fig_widget
+
     def save(self, path):
         """
         Saves the chart as an image file
@@ -157,15 +189,42 @@ class RunChart:
         """
         self._fig.write_image(path)
 
+    def update(self, x_values, labels, x_center):
+        """
+        If the chart exists, it is updated with new values for the X and R data.
+
+        :param x_values: the values to be plotted on the chart
+        :param labels: the labels for the values plotted on the X and R charts
+        :param x_center: the values of the center line for the X chart
+        """
+        self._x_values = x_values
+        self._x = labels
+        self._x_center = x_center
+
+        for chart in [self._fig, self._fig_widget]:
+            if chart is None:
+                continue
+            # chart values
+            chart.data[0]['y'] = self._x_values
+            chart.data[0]['x'] = self._x
+            chart.data[0]['customdata'] = self._marker_labels(self._x_title, self._x_values)
+            # chart center line
+            chart.data[1]['x'] = self._x
+            chart.data[1]['y'] = np.repeat(self._x_center, self._x.size)
+            chart.data[1]['customdata'] = self._limit_labels(self._x_center, 'Median')
+
 
 class XRChart:
     """
     Plotly chart for X and R
 
     Methods:
-        draw()
         save()
         update()
+
+    Properties:
+        figure
+        widget
     """
 
     def __init__(self, x_values, labels, x_center, x_status, x_upper_limit, x_lower_limit, r_values, r_status,
@@ -212,7 +271,12 @@ class XRChart:
 
     @staticmethod
     def _marker_colors(status):
-        """ Sets the color of the markers based on whether they are in or out of control"""
+        """
+        Sets the color of the markers based on whether they are in or out of control
+
+        :param status: boolean array where True means the value is in control
+        :returns: array of marker colors
+        """
         return np.where(status, 'green', 'red')
 
     def _marker_labels(self, axis_title, values):
@@ -230,16 +294,25 @@ class XRChart:
         )
 
     def _limit_labels(self, value, name):
-        """ Creates the text for the hover labels for the center or control limit lines."""
+        """
+        Creates the text for the hover labels for the center or control limit lines.
+
+        :param value: the value of the center line or control limit: this will be displayed in the hover
+        text
+        :param name: the name to give the center line or control limit: this will be
+        displayed in the hover text
+        :returns: the hover text for each data point
+        """
         return np.repeat(f'{name}: {value}', self._x.size)
 
     def _limit_trace(self, limit, name, kind):
         """
-        Creates a trace for ceneter line or control limits
+        Creates a trace for center line or control limits
 
         :param limit: the control limit
         :param name: the name of the trace to be used in hover text
         :param kind: 'center' for a center line or 'limit' for a control limit
+        :returns: a trace object
         """
         if kind == 'center':
             line = dict(color='black', width=1)
@@ -263,6 +336,7 @@ class XRChart:
         :param values: the values to plot
         :param status: whether the values are in or out of control
         :param marker_labels: the labels for the values
+        :returns: a trace object
         """
         return go.Scatter(
             x=self._x,
@@ -281,7 +355,7 @@ class XRChart:
         )
 
     def _create(self):
-        """Creates a plotly chart and shows it."""
+        """Creates a plotly chart as a Figure object."""
         self._fig.add_trace(
             self._value_trace(
                 values=self._x_values,
@@ -410,41 +484,59 @@ class Run:
     """
     Run chart
 
-    methods:
-        save()
-        plot()
+    Methods:
+        fit()
+        save_chart()
+
+    properties:
+        center_line
+        chart
     """
 
-    def __init__(self, values, labels, title='', x_title='Average', chart_width=800, chart_height=600):
+    def __init__(self, title='', x_title='Median', chart_width=800, chart_height=600):
         """
 
-        :param values: The values to plot. Must be numpy.array like
-        :param labels: The labels for the values. Must be numpy.array like
         :param title: The chart title
         :param x_title: The title for the y-axis
         :param chart_width: The chart width in pixels, defaults to 800.
         :param chart_height: The chart height in pixels, defaults to 600.
         """
-        self._x_values = np.array(values)
-        self._labels = np.array(labels)
+
         self._title = title
         self._x_title = x_title
         self._chart_width = chart_width
         self._chart_height = chart_height
+        self._x_values = None
+        self._labels = None
         self._x_center_line = None
         self._fitted = False
         self._chart = None
-        self._fit()
 
-    def _fit(self):
+    def fit(self, values, labels):
+        """
+        Calculates the center line.
+
+        :param values: The values to be plotted.
+        :type values: list, tuple or array
+        :param labels: The labels for each value
+        :type labels: list, tuple or array of strings
+        :raises: ValueError: if values has more than one dimension.
+        """
+
+        self._x_values = np.array(values)
+        self._labels = np.array(labels)
         if self._x_values.ndim > 1:
             raise ValueError('Values has more than one column.')
         self._x_center_line = np.median(self._x_values)
         self._fitted = True
+        if self._chart is None:
+            self._create_chart()
+        else:
+            self._update_chart()
 
-    def plot(self):
+    def _create_chart(self):
         """
-        Plots the chart.
+        Creates the chart.
 
         :raises: ValueError: if there is no data to plot
         """
@@ -460,17 +552,29 @@ class Run:
             height=self._chart_height
         )
 
+    def _update_chart(self):
+        """Updates the chart."""
+        self._chart.update(
+            x_values=self._x_values,
+            labels=self._labels,
+            x_center=self._x_center_line
+        )
+
     @property
     def centre_line(self):
         """Returns the value of the center line (median)."""
         return self._x_center_line
 
+    @property
+    def chart(self):
+        """The chart object"""
+        return self._chart
+
     def save_chart(self, path):
         """
         Saves an image of the chart to a file.
 
-        :param path: The full path and filename to save to. The file type is automatically determined
-        by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
+        :param path: The full path and filename to save to. The file type is automatically determined by the filename extension. Allowed files types are PNG, JPEG, WebP, SVG and PDF.
         """
         self._chart.save(path)
 
@@ -482,7 +586,6 @@ class XbarR:
     Methods:
         fit()
         predict()
-        plot()
         save()
         load()
         save_chart()
@@ -628,6 +731,7 @@ class XbarR:
         )
 
     def _update_chart(self):
+        """Updates the chart object"""
         self._chart.update(
             x_values=self._x_values,
             labels=self._labels,
@@ -644,6 +748,7 @@ class XbarR:
 
     @property
     def chart(self):
+        """The chart object"""
         return self._chart
 
     def save_chart(self, path):

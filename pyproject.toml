@@ -3,8 +3,8 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "spc_charts"
-version = "0.0.10"
+name = "plotly_spc_charts"
+version = "0.0.13"
 authors = [
   { name="Julian Wright", email="joolianwright@googlemail.com" },
 ]
@@ -30,11 +30,11 @@ Documentation = "https://plotly-spc-charts.readthedocs.io/en/latest/"
 Examples = "https://github.com/joolian/plotly_spc_charts/tree/package/examples"
 
 [tool.setuptools.packages.find]
-include = ["spc_charts"]
+include = ["plotly_spc_charts"]
 namespaces = false
 
 [tool.setuptools.package-data]
-spc_charts = ["*.csv"]
+plotly_spc_charts = ["*.csv"]
 
 [tool.setuptools]
 include-package-data = true

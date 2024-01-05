@@ -1,4 +1,4 @@
-spc_charts
+charts
 ==========
 
 .. toctree::

@@ -5,4 +5,4 @@ dist/
 *.DS_Store
 *.pdf
 docs/build/
-/spc_charts/Untitled.ipynb
+/plotly_spc_charts/Untitled.ipynb
