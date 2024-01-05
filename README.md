@@ -2,6 +2,14 @@
 
 [![Documentation Status](https://readthedocs.org/projects/plotly-spc-charts/badge/?version=latest)](https://plotly-spc-charts.readthedocs.io/en/latest/?badge=latest)
 
+## Installation
+This project is in progress, so constantly changing. You can find the package at TestPyPI:
+[plotly-spc-charts](https://test.pypi.org/project/plotly-spc-charts)
+
+To install:
+
+`pip install -i https://test.pypi.org/simple/ plotly-spc-charts`
+
 ## Shewart Average and Range Chart
 Creates an interactive Average and Range chart using Plotly.  
 * Subgroups are classed as out of control if they are greater than the upper control limit or less than the lower control limit.  

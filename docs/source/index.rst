@@ -4,13 +4,14 @@
    contain the root `toctree` directive.
 
 Welcome to plotly_spc_charts's documentation
-======================================
+============================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    intro
+   install
    charts
 
 Indices and tables
